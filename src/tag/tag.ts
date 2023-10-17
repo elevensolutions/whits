@@ -1,57 +1,15 @@
-import type {Attributes, AttributesArg, Selector, SelectorName, TagContent} from './types';
-import {RawContent} from './raw';
-import {encodeEntities} from './utils';
-
-class TagClass {
-	private readonly value: Set<string> = new Set();
-
-	constructor(value?: string | Set<string> | string[]) {
-		if (!value) return;
-		typeof value === 'string' ? this.add(value) : this.add(...value);
-	}
-
-	public add(...value: string[]): void {
-		for (const item of value) this.value.add(item);
-	}
-
-	public remove(...value: string[]): void {
-		for (const item of value) this.value.delete(item);
-	}
-
-	public clear(): void {
-		this.value.clear();
-	}
-
-	public toString(): string {
-		return Array.from(this.value).join(' ');
-	}
-}
-
-class TagStyle {
-	private readonly value: Map<string, string> = new Map();
-
-	constructor(value?: string | Record<string, string> | Map<string, string>) {
-		if (!value) return;
-		if (typeof value === 'string') {
-			for (const rule of value.split(';')) for (let [name, style] of rule.split(':')) {
-				if (name?.trim()) this.value.set(name, style.trim());
-			}
-		} else {
-			for (const [key, style] of (value instanceof Map ? value : Object.entries(value))) {
-				this.value.set(key.trim(), style.trim());
-			}
-		}
-	}
-
-	public toString(): string {
-		return Array.from(this.value).map(([key, style]) => `${key}: ${style};`).join(' ');
-	}
-}
+import type {Attributes, AttributesArg, Selector, SelectorName, TagContent} from '../types.js';
+import {RawContent} from '../raw.js';
+import {encodeEntities} from '../utils.js';
+import {TagClass} from './class.js';
+import {TagStyle} from './style.js';
+import voids from './voids.js';
 
 export class Tag<S extends Selector, T extends SelectorName<S> = SelectorName<S>> {
 	public readonly tag: T;
 	public readonly children: TagContent;
 	public readonly attributes: Partial<Attributes<T>> = {};
+	public readonly outerContent: Record<'before' | 'after', null | string | RawContent> = {before: null, after: null};
 
 	public class: TagClass = new TagClass();
 	public style: TagStyle = new TagStyle();
@@ -84,11 +42,22 @@ export class Tag<S extends Selector, T extends SelectorName<S> = SelectorName<S>
 		this.class.add(...selectorParts.filter((part) => part.groups?.mod === '.').map((part) => part.groups?.name as string));
 	}
 
+	private getOuter(section: keyof Tag<S>['outerContent']): string {
+		const value = this.outerContent[section];
+		if (!value) return '';
+		if (value instanceof RawContent) return value.content;
+		return encodeEntities(value);
+	}
+
 	public clone(deep: boolean = false): Tag<S, T> {
-		return new Tag(this.selector, this.attributes, deep ? this.children.map((child) => {
-			if (child instanceof Tag || child instanceof RawContent) return child.clone();
+		return new Tag(this.selector, JSON.parse(JSON.stringify(this.attributes)), deep ? this.children.map((child) => {
+			if (child instanceof Tag || child instanceof RawContent) return child.clone(true);
 			return child.toString();
 		}) : undefined);
+	}
+
+	public toString(): string {
+		return this.html;
 	}
 
 	public get htmlAttributes(): string {
@@ -108,6 +77,10 @@ export class Tag<S extends Selector, T extends SelectorName<S> = SelectorName<S>
 	}
 
 	public get html(): string {
-		return `<${this.tag}${this.htmlAttributes}>${this.htmlChildren}</${this.tag}>`;
+		const before = this.getOuter('before');
+		const after = this.getOuter('after');
+		const htmlOpen = `${before}<${this.tag}${this.htmlAttributes}>`;
+		if (voids.includes(this.tag as any)) return htmlOpen + after;
+		return `${htmlOpen}${this.htmlChildren}</${this.tag}>${after}`;
 	}
 }

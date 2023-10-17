@@ -1,6 +1,6 @@
-import type {GlobalAttribute, HTMLAttribute, HTMLTag} from './htmlAttributes';
-import type {RawContent} from './raw';
-import type {Tag} from './tag';
+import type {GlobalAttribute, HTMLAttribute, HTMLTag} from './htmlAttributes.js';
+import type {RawContent} from './raw.js';
+import type {Tag} from './tag/tag.js';
 
 type SelectorPart = '' | `.${string}` | `#${string}`;
 type AnyTag = {[K in Selector]: Tag<K>}[Selector];
