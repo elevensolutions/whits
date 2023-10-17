@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "HyperText TypeScript Templating System",
   "scripts": {
-    "attr-types": "node convertTypes > htmlAttributes.ts"
+    "attr-types": "node convertTypes > src/htmlAttributes.ts"
   },
   "dependencies": {
     "html-element-attributes": "^3.2.0"
