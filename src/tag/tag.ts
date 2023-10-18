@@ -15,7 +15,7 @@ export class Tag<S extends Selector, T extends SelectorName<S> = SelectorName<S>
 	public style: TagStyle = new TagStyle();
 
 	constructor(
-		public readonly selector: S,
+		public readonly selector: S = 'div' as S,
 		attributes: AttributesArg<T> = {},
 		children?: TagContent | RawContent | string
 	) {
