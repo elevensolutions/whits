@@ -1,4 +1,4 @@
-import type {Attributes, AttributesArg, Selector, SelectorName, TagContent} from '../types.js';
+import type {Attributes, AttributesArg, ChildrenArg, Selector, SelectorName, TagContent, VoidTagName} from '../types.js';
 import {RawContent} from '../raw.js';
 import {encodeEntities} from '../utils.js';
 import {TagClass} from './class.js';
@@ -7,7 +7,8 @@ import voids from './voids.js';
 
 export class Tag<S extends Selector, T extends SelectorName<S> = SelectorName<S>> {
 	public readonly tag: T;
-	public readonly children: TagContent;
+	public readonly isVoid: T extends VoidTagName ? true : false;
+	public readonly children: T extends VoidTagName ? [] : TagContent;
 	public readonly attributes: Partial<Attributes<T>> = {};
 	public readonly outerContent: Record<'before' | 'after', null | string | RawContent> = {before: null, after: null};
 
@@ -17,11 +18,12 @@ export class Tag<S extends Selector, T extends SelectorName<S> = SelectorName<S>
 	constructor(
 		public readonly selector: S = 'div' as S,
 		attributes: AttributesArg<T> = {},
-		children?: TagContent | RawContent | string
+		children?: ChildrenArg<T>
 	) {
 		const selectorParts = [...(this.selector.matchAll(/(?<mod>[\.#])?(?<name>[\w_-]*)/g) || [])].filter((part) => part.groups?.name);
 		this.tag = (selectorParts.find((part) => !part.groups?.mod)?.groups?.name || 'div') as T;
-		this.children = children ? (Array.isArray(children) ? children : [children]) : [];
+		this.isVoid = voids.includes(this.tag as VoidTagName) as any;
+		this.children = children ? (Array.isArray(children) ? children : [children]) : [] as any;
 
 		Object.defineProperties(this.attributes, {
 			class: {
@@ -50,10 +52,15 @@ export class Tag<S extends Selector, T extends SelectorName<S> = SelectorName<S>
 	}
 
 	public clone(deep: boolean = false): Tag<S, T> {
-		return new Tag(this.selector, JSON.parse(JSON.stringify(this.attributes)), deep ? this.children.map((child) => {
-			if (child instanceof Tag || child instanceof RawContent) return child.clone(true);
-			return child.toString();
-		}) : undefined);
+		const attributes = JSON.parse(JSON.stringify(this.attributes));
+		if (this.isVoid || !deep) return new Tag(this.selector, attributes);
+		return new Tag(
+			this.selector, attributes,
+			this.children.map((child) => {
+				if (child instanceof Tag || child instanceof RawContent) return child.clone(true);
+				return child.toString();
+			}) as ChildrenArg<T>
+		);
 	}
 
 	public toString(): string {
@@ -80,7 +87,7 @@ export class Tag<S extends Selector, T extends SelectorName<S> = SelectorName<S>
 		const before = this.getOuter('before');
 		const after = this.getOuter('after');
 		const htmlOpen = `${before}<${this.tag}${this.htmlAttributes}>`;
-		if (voids.includes(this.tag as any)) return htmlOpen + after;
+		if (this.isVoid) return htmlOpen + after;
 		return `${htmlOpen}${this.htmlChildren}</${this.tag}>${after}`;
 	}
 }

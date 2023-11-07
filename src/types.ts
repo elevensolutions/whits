@@ -1,9 +1,13 @@
 import type {GlobalAttribute, HTMLAttribute, HTMLTag} from './htmlAttributes.js';
 import type {RawContent} from './raw.js';
 import type {Tag} from './tag/tag.js';
+import type voids from './tag/voids.js';
 
 type SelectorPart = '' | `.${string}` | `#${string}`;
 type AnyTag = {[K in Selector]: Tag<K>}[Selector];
+
+export type VoidTagName = typeof voids[number];
+export type NonVoidTagName = Exclude<HTMLTag, VoidTagName>;
 
 export type Selector = {[K in HTMLTag]: `${K}${SelectorPart}`}[HTMLTag] | SelectorPart;
 export type SelectorName<S extends Selector> = S extends `${infer T}${SelectorPart}` ? T extends '' ? 'div' : T & HTMLTag : never;
@@ -13,3 +17,4 @@ export type AttributesArg<T extends HTMLTag> = Partial<Attributes<T> | {
 	class: string[] | Set<string>;
 	style: Record<string, string> | Map<string, string>;
 }>
+export type ChildrenArg<T extends HTMLTag> = T extends VoidTagName ? undefined : TagContent | RawContent | string;
