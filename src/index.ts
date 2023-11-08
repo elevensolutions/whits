@@ -22,3 +22,11 @@ export function html(attributes?: AttributesArg<'html'>, content?: TagContent | 
 	tag.outerContent.before = raw('<!doctype html>\n');
 	return tag;
 }
+
+export function javascript(content: TemplateStringsArray, ...values: string[]): Tag<'script'> {
+	return _('script', raw(String.raw({ raw: content }, ...values)));
+}
+
+export function css(content: TemplateStringsArray, ...values: string[]): Tag<'style'> {
+	return _('style', raw(String.raw({ raw: content }, ...values)));
+}
