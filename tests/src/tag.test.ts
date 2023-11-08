@@ -9,6 +9,7 @@ describe('Tag creation and manipulation', () => {
 	test('Basic div tag is created properly', () => {
 		expect(tag).toBeInstanceOf(Tag);
 		expect(tag.tag).toBe('div');
+		expect(tag.isVoid).toBe(false);
 		expect(tag.class).toBeInstanceOf(TagClass);
 		expect(tag.style).toBeInstanceOf(TagStyle);
 		expect(typeof tag.attributes).toBe('object');

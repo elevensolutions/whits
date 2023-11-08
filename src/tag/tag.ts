@@ -23,7 +23,11 @@ export class Tag<S extends Selector, T extends SelectorName<S> = SelectorName<S>
 		const selectorParts = [...(this.selector.matchAll(/(?<mod>[\.#])?(?<name>[\w_-]*)/g) || [])].filter((part) => part.groups?.name);
 		this.tag = (selectorParts.find((part) => !part.groups?.mod)?.groups?.name || 'div') as T;
 		this.isVoid = voids.includes(this.tag as VoidTagName) as any;
-		this.children = children ? (Array.isArray(children) ? children : [children]) : [] as any;
+		this.children = children && !this.isVoid ? (Array.isArray(children) ? children : [children]) : [] as any;
+		if (this.isVoid) {
+			Object.freeze(this.children);
+			if (children) throw new Error(`Void tag ${this.tag} cannot have children`);
+		}
 
 		Object.defineProperties(this.attributes, {
 			class: {
