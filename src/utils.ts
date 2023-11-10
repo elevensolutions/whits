@@ -1,3 +1,8 @@
+/**
+ * Encodes special characters in a string to their corresponding HTML entities.
+ * @param input The string to encode.
+ * @returns The encoded string.
+ */
 export function encodeEntities(input: string): string {
 	return input.
 		replace(/&/g, '&amp;').

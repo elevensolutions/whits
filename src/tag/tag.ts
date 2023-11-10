@@ -5,16 +5,39 @@ import {TagClass} from './class.js';
 import {TagStyle} from './style.js';
 import voids from './voids.js';
 
+/**
+ * Represents an HTML tag with its attributes and children.
+ * @template S The selector.
+ * @template T The tag name.
+ */
 export class Tag<S extends Selector, T extends SelectorName<S> = SelectorName<S>> {
+	/** The tag name. */
 	public readonly tag: T;
+	
+	/** Whether the tag is a void tag or not. */
 	public readonly isVoid: T extends VoidTagName ? true : false;
+	
+	/** An array of child elements of the tag. */
 	public readonly children: T extends VoidTagName ? [] : TagContent;
+	
+	/** The attributes of the tag. */
 	public readonly attributes: Partial<Attributes<T>> = {};
+	
+	/** Optional content to insert before and/or after the tag. */
 	public readonly outerContent: Record<'before' | 'after', null | string | RawContent> = {before: null, after: null};
 
+	/** The class of the tag. */
 	public class: TagClass = new TagClass();
+
+	/** The style of the tag. */
 	public style: TagStyle = new TagStyle();
 
+	/**
+	 * Creates a new instance of the `Tag` class.
+	 * @param selector The selector string of the tag.
+	 * @param attributes The attributes of the tag.
+	 * @param children An array of child elements of the tag.
+	 */
 	constructor(
 		public readonly selector: S = 'div' as S,
 		attributes: AttributesArg<T> = {},
@@ -48,6 +71,11 @@ export class Tag<S extends Selector, T extends SelectorName<S> = SelectorName<S>
 		this.class.add(...selectorParts.filter((part) => part.groups?.mod === '.').map((part) => part.groups?.name as string));
 	}
 
+	/**
+	 * Returns the content to insert before or after the tag.
+	 * @param section The section to retrieve - before or after.
+	 * @returns The content of the specified section, or an empty string if it does not exist.
+	 */
 	private getOuter(section: keyof Tag<S>['outerContent']): string {
 		const value = this.outerContent[section];
 		if (!value) return '';
@@ -55,6 +83,11 @@ export class Tag<S extends Selector, T extends SelectorName<S> = SelectorName<S>
 		return encodeEntities(value);
 	}
 
+	/**
+	 * Clones the tag.
+	 * @param deep Whether to clone the children of the tag or not.
+	 * @returns A new instance of the `Tag` class.
+	 */
 	public clone(deep: boolean = false): Tag<S, T> {
 		const attributes = JSON.parse(JSON.stringify(this.attributes));
 		if (this.isVoid || !deep) return new Tag(this.selector, attributes);
@@ -67,10 +100,18 @@ export class Tag<S extends Selector, T extends SelectorName<S> = SelectorName<S>
 		);
 	}
 
+	/**
+	 * Returns the HTML string representation of the tag.
+	 * @returns The HTML string representation of the tag.
+	 */
 	public toString(): string {
 		return this.html;
 	}
 
+	/**
+	 * Returns the HTML attributes string of the tag.
+	 * @returns The HTML attributes string of the tag.
+	 */
 	public get htmlAttributes(): string {
 		const attributes = Object.entries(this.attributes).filter(([, value]) => value).map(([key, value]) => {
 			if (typeof value === 'boolean') return key;
@@ -79,6 +120,10 @@ export class Tag<S extends Selector, T extends SelectorName<S> = SelectorName<S>
 		return attributes ? ` ${attributes}` : '';
 	}
 
+	/**
+	 * Returns the HTML string representation of the child elements of the tag.
+	 * @returns The HTML string representation of the child elements of the tag.
+	 */
 	public get htmlChildren(): string {
 		return this.children.map((child) => {
 			if (child instanceof Tag) return child.html;
@@ -87,6 +132,10 @@ export class Tag<S extends Selector, T extends SelectorName<S> = SelectorName<S>
 		}).join('');
 	}
 
+	/**
+	 * Returns the HTML string representation of the tag.
+	 * @returns The HTML string representation of the tag.
+	 */
 	public get html(): string {
 		const before = this.getOuter('before');
 		const after = this.getOuter('after');

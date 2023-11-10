@@ -2,7 +2,7 @@
 	"compileOnSave": false,
 	"compilerOptions": {
 		"esModuleInterop": true,
-		"removeComments": true,
+		"removeComments": false,
 		"allowSyntheticDefaultImports": true,
 		"downlevelIteration": true,
 		"declaration": true,

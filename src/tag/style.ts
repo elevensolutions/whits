@@ -1,6 +1,14 @@
+/**
+ * Represents the `style` attribute for an HTML tag.
+ */
 export class TagStyle {
+	/** The value of the style. */
 	private readonly value: Map<string, string> = new Map();
 
+	/**
+	 * Creates a new `TagStyle` instance.
+	 * @param value The initial value of the style.
+	 */
 	constructor(value?: string | Record<string, string> | Map<string, string>) {
 		if (!value) return;
 		if (typeof value === 'string') {
@@ -14,6 +22,11 @@ export class TagStyle {
 		}
 	}
 
+	/**
+	 * Sets a style property.
+	 * @param name The name of the property.
+	 * @param value The value of the property.
+	 */
 	public set(name?: string, value?: string): void {
 		const trimmedName = name?.trim();
 		const trimmedValue = value?.trim();
@@ -21,6 +34,10 @@ export class TagStyle {
 		this.value.set(trimmedName, trimmedValue);
 	}
 
+	/**
+	 * Returns a string representation of the style.
+	 * @returns A string representation of the style.
+	 */
 	public toString(): string {
 		return Array.from(this.value).map(([key, style]) => `${key}: ${style};`).join(' ');
 	}
