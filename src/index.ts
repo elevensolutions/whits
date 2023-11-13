@@ -1,4 +1,4 @@
-import type {AttributesArg, ChildrenArg, Selector, SelectorName, TagContent} from './types.js';
+import type {AttributesArg, ChildrenArg, SelectorString, SelectorName, TagContent, TagChild} from './types.js';
 import {RawContent} from './raw.js';
 import {Tag} from './tag/tag.js';
 
@@ -7,23 +7,31 @@ export * from './tag/tag.js';
 export * from './utils.js';
 
 /**
- * Creates a new `Tag` instance with the given tag and content.
- * @param tag The tag name or selector.
- * @param content The children or content of the tag.
- * @returns A new `Tag` instance.
+ * Returns a "factory" function to create tags with the given selector.
+ * @param selectorString The selector string of the tag.
+ * @returns A function to create tags with the given selector.
  */
-export function _<S extends Selector, T extends SelectorName<S>>(tag: S, content?: ChildrenArg<T>): Tag<S, T>;
-/**
- * Creates a new `Tag` instance with the given tag, attributes, and content.
- * @param tag The tag name or selector.
- * @param attributes The attributes of the tag.
- * @param content The children or content of the tag.
- * @returns A new `Tag` instance.
- */
-export function _<S extends Selector, T extends SelectorName<S>>(tag: S, attributes?: AttributesArg<T>, content?: ChildrenArg<T>): Tag<S, T>;
-export function _<S extends Selector, T extends SelectorName<S>>(tag: S, arg2?: AttributesArg<T> | ChildrenArg<T>, content?: ChildrenArg<T>): Tag<S, T> {
-	if (typeof arg2 === 'string' || arg2 instanceof RawContent || Array.isArray(arg2)) return new Tag(tag, {}, arg2 as ChildrenArg<T>);
-	return new Tag(tag, arg2 as AttributesArg<T>, content);
+export function _<S extends SelectorString, T extends SelectorName<S> = SelectorName<S>>(selectorString: S) {
+	/**
+	 * Creates a new `Tag` instance with the given selector and content.
+	 * @param tag The tag name or selector.
+	 * @param content The children or content of the tag.
+	 * @returns A new `Tag` instance.
+	 */
+	function createTag(content?: ChildrenArg<T>): Tag<S, T>;
+	/**
+	 * Creates a new `Tag` instance with the given selector, attributes, and content.
+	 * @param tag The tag name or selector.
+	 * @param attributes The attributes of the tag.
+	 * @param content The children or content of the tag.
+	 * @returns A new `Tag` instance.
+	 */
+	function createTag(attributes?: AttributesArg<T>, content?: ChildrenArg<T>): Tag<S, T>;
+	function createTag(arg2?: AttributesArg<T> | ChildrenArg<T>, content?: ChildrenArg<T>): Tag<S, T> {
+		if (typeof arg2 === 'string' || arg2 instanceof RawContent || Array.isArray(arg2)) return new Tag(selectorString, {}, arg2 as ChildrenArg<T>);
+		return new Tag(selectorString, arg2 as AttributesArg<T>, content);
+	}
+	return createTag;
 }
 
 /**
@@ -37,15 +45,11 @@ export function raw(content: string): RawContent {
 }
 
 /**
- * Creates the root `html` tag with the given attributes and content.
- * @param attributes The attributes of the `html` tag.
- * @param content The children or content of the `html` tag.
- * @returns A new Tag instance using the `html` tag.
+ * Creates a `doctype` tag.
+ * @returns A new `RawContent` instance.
  */
-export function html(attributes?: AttributesArg<'html'>, content?: TagContent | RawContent | string): Tag<'html'> {
-	const tag = _('html', attributes, content);
-	tag.outerContent.before = raw('<!doctype html>\n');
-	return tag;
+export function doctype(): RawContent {
+	return raw('<!DOCTYPE html>\n');
 }
 
 /**
@@ -63,7 +67,7 @@ export function html(attributes?: AttributesArg<'html'>, content?: TagContent | 
  * `
  */
 export function javascript(content: TemplateStringsArray, ...values: string[]): Tag<'script'> {
-	return _('script', raw(String.raw({ raw: content }, ...values)));
+	return _('script')(raw(String.raw({ raw: content }, ...values)));
 }
 
 /**
@@ -82,5 +86,15 @@ export function javascript(content: TemplateStringsArray, ...values: string[]): 
  * `
  */
 export function css(content: TemplateStringsArray, ...values: string[]): Tag<'style'> {
-	return _('style', raw(String.raw({ raw: content }, ...values)));
+	return _('style')(raw(String.raw({ raw: content }, ...values)));
+}
+
+/**
+ * Loops over the given number of iterations and calls the given callback function for each iteration.
+ * @param count The number of iterations.
+ * @param callback The callback function.
+ * @returns An array of the return values of the callback function.
+ */
+export function loop(count: number, callback: (index: number) => TagChild): TagContent {
+	return Array.from({length: count}, ($$, i) => callback(i));
 }

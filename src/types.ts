@@ -13,7 +13,7 @@ type SelectorPart = '' | `.${string}` | `#${string}`;
  * A type that represents any HTML tag.
  * It is a mapped type that iterates over all possible HTML tag names and returns the corresponding Tag type.
  */
-type AnyTag = {[K in Selector]: Tag<K>}[Selector];
+export type AnyTag = {[K in SelectorString]: Tag<K>}[SelectorString];
 
 /**
  * A string that represents the name of a void HTML tag.
@@ -30,18 +30,28 @@ export type NonVoidTagName = Exclude<HTMLTag, VoidTagName>;
 /**
  * A string that represents a CSS selector.
  */
-export type Selector = {[K in HTMLTag]: `${K}${SelectorPart}`}[HTMLTag] | SelectorPart;
+export type SelectorString = {[K in HTMLTag]: `${K}${SelectorPart}`}[HTMLTag] | SelectorPart;
 
 /**
  * A string that represents the name of a tag based on its selector.
  * @template S The selector.
  */
-export type SelectorName<S extends Selector> = S extends `${infer T}${SelectorPart}` ? T extends '' ? 'div' : T & HTMLTag : never;
+export type SelectorName<S extends SelectorString> = S extends `${infer T}${SelectorPart}` ? T extends '' ? 'div' : T & HTMLTag : never;
+
+/**
+ * Represents a child of a tag.
+ */
+export type TagChild = AnyTag | RawContent | string;
+
+/**
+ * Represents a function that creates a child of a tag.
+ */
+export type TagChildFactory = (...args: any[]) => TagChild;
 
 /**
  * An array of `Tag`, `RawContent`, or string values that represent the content or children of a tag.
  */
-export type TagContent = (AnyTag | RawContent | string)[];
+export type TagContent = TagChild[];
 
 /**
  * An object that represents the attributes of an HTML tag.
@@ -63,4 +73,4 @@ export type AttributesArg<T extends HTMLTag> = Partial<Attributes<T> | {
  * Represents an object that can be used to specify children for an HTML element.
  * @template T The HTML tag name.
  */
-export type ChildrenArg<T extends HTMLTag> = T extends VoidTagName ? undefined : TagContent | RawContent | string;
+export type ChildrenArg<T extends HTMLTag> = T extends VoidTagName ? undefined : (TagChild | TagChildFactory)[] | TagChildFactory | RawContent | string;

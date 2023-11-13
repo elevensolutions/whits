@@ -1,18 +1,19 @@
-import type {Attributes, AttributesArg, ChildrenArg, Selector, SelectorName, TagContent, VoidTagName} from '../types.js';
+import type {Attributes, AttributesArg, ChildrenArg, SelectorString, SelectorName, TagContent, VoidTagName} from '../types.js';
 import {RawContent} from '../raw.js';
 import {encodeEntities} from '../utils.js';
 import {TagClass} from './class.js';
 import {TagStyle} from './style.js';
 import voids from './voids.js';
+import {Selector} from './selector.js';
 
 /**
  * Represents an HTML tag with its attributes and children.
  * @template S The selector.
  * @template T The tag name.
  */
-export class Tag<S extends Selector, T extends SelectorName<S> = SelectorName<S>> {
-	/** The tag name. */
-	public readonly tag: T;
+export class Tag<S extends SelectorString, T extends SelectorName<S> = SelectorName<S>> {
+	/** The selector of the tag. */
+	public readonly selector: Selector<S, T>;
 	
 	/** Whether the tag is a void tag or not. */
 	public readonly isVoid: T extends VoidTagName ? true : false;
@@ -34,19 +35,20 @@ export class Tag<S extends Selector, T extends SelectorName<S> = SelectorName<S>
 
 	/**
 	 * Creates a new instance of the `Tag` class.
-	 * @param selector The selector string of the tag.
+	 * @param selectorString The selector string of the tag.
 	 * @param attributes The attributes of the tag.
 	 * @param children An array of child elements of the tag.
 	 */
 	constructor(
-		public readonly selector: S = 'div' as S,
+		selectorString: S = 'div' as S,
 		attributes: AttributesArg<T> = {},
 		children?: ChildrenArg<T>
 	) {
-		const selectorParts = [...(this.selector.matchAll(/(?<mod>[\.#])?(?<name>[\w_-]*)/g) || [])].filter((part) => part.groups?.name);
-		this.tag = (selectorParts.find((part) => !part.groups?.mod)?.groups?.name || 'div') as T;
+		this.selector = new Selector<S, T>(selectorString);
 		this.isVoid = voids.includes(this.tag as VoidTagName) as any;
-		this.children = children && !this.isVoid ? (Array.isArray(children) ? children : [children]) : [] as any;
+		this.children = (children && !this.isVoid ? (Array.isArray(children) ? children : [children]) : [] as any)
+			.map((child) => typeof child === 'function' ? child() : child);
+
 		if (this.isVoid) {
 			Object.freeze(this.children);
 			if (children) throw new Error(`Void tag ${this.tag} cannot have children`);
@@ -65,10 +67,9 @@ export class Tag<S extends Selector, T extends SelectorName<S> = SelectorName<S>
 			}
 		});
 
-		const id = selectorParts.find((part) => part.groups?.mod === '#')?.groups?.name;
-		if (id) this.attributes.id = id;
+		if (this.selector.id) this.attributes.id = this.selector.id;
 		Object.assign(this.attributes, attributes);
-		this.class.add(...selectorParts.filter((part) => part.groups?.mod === '.').map((part) => part.groups?.name as string));
+		this.class.add(...this.selector.class);
 	}
 
 	/**
@@ -90,9 +91,9 @@ export class Tag<S extends Selector, T extends SelectorName<S> = SelectorName<S>
 	 */
 	public clone(deep: boolean = false): Tag<S, T> {
 		const attributes = JSON.parse(JSON.stringify(this.attributes));
-		if (this.isVoid || !deep) return new Tag(this.selector, attributes);
+		if (this.isVoid || !deep) return new Tag(this.selector.toString(), attributes);
 		return new Tag(
-			this.selector, attributes,
+			this.selector.toString(), attributes,
 			this.children.map((child) => {
 				if (child instanceof Tag || child instanceof RawContent) return child.clone(true);
 				return child.toString();
@@ -106,6 +107,14 @@ export class Tag<S extends Selector, T extends SelectorName<S> = SelectorName<S>
 	 */
 	public toString(): string {
 		return this.html;
+	}
+
+	/**
+	 * Returns the tag name.
+	 * @returns The tag name.
+	 */
+	public get tag(): T {
+		return this.selector.tag || 'div';
 	}
 
 	/**
