@@ -136,7 +136,7 @@ export class Tag<S extends SelectorString, T extends SelectorName<S> = SelectorN
 	public get htmlChildren(): string {
 		return this.children.map((child) => {
 			if (child instanceof Tag) return child.html;
-			if (child instanceof RawContent) return child.content;
+			if (child instanceof RawContent) return child.toString();
 			return encodeEntities(child);
 		}).join('');
 	}

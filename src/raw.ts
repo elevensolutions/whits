@@ -12,11 +12,14 @@ export class RawContent {
 	constructor(public content: string) {}
 
 	/**
-	 * Returns the raw content.
-	 * @returns The raw content.
+	 * Returns the raw content with indentation minimized.
+	 * @returns The content string.
 	 */
 	public toString(): string {
-		return this.content;
+		const content = this.content.split('\n');
+		const tabs = Math.min(...content.filter((line) => line.trim().length).map((line) => line.match(/^\s+/)?.[0].length || 0));
+		const regex = new RegExp(`^\\s{0,${tabs}}`);
+		return content.map((line) => line.replace(regex, '')).join('\n');
 	}
 
 	/**
