@@ -74,3 +74,25 @@ export type AttributesArg<T extends HTMLTag> = Partial<Attributes<T> | {
  * @template T The HTML tag name.
  */
 export type ChildrenArg<T extends HTMLTag> = T extends VoidTagName ? undefined : (TagChild | TagChildFactory)[] | TagChildFactory | RawContent | string;
+
+/**
+ * A factory function that creates a new instance of a tag.
+ * @template S - The selector.
+ * @template T - The HTML tag name.
+ */
+export interface TagFactory<S extends SelectorString, T extends SelectorName<S> = SelectorName<S>> {
+	/**
+	 * Creates a new `Tag` instance with the given content.
+	 * @param content The children or content of the tag.
+	 * @returns A new `Tag` instance.
+	 */
+	(content: ChildrenArg<T>): Tag<S, T>;
+
+	/**
+	 * Creates a new `Tag` instance with the given attributes and content.
+	 * @param attributes The attributes of the tag.
+	 * @param content The children or content of the tag.
+	 * @returns A new `Tag` instance.
+	 */
+	(attributes?: AttributesArg<T>, content?: ChildrenArg<T>): Tag<S, T>;
+}

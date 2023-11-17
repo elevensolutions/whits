@@ -3,18 +3,6 @@ import {htmlTagNames} from 'html-tag-names';
 import {createWriteStream} from 'fs';
 import {promisify} from 'util';
 
-function template(tag) {
-	return /* typescript */ `
-		/**
-		 * Creates a new \`${tag}\` \`Tag\` instance with the given attributes and content.
-		 * @param attributes The attributes of the tag.
-		 * @param content The children or content of the tag.
-		 * @returns A new \`Tag\` instance.
-		 */
-		export const _${tag} = _('${tag}');
-	`.replace(/\n\t\t/g, '\n');
-}
-
 function openFile(path) {
 	const output = createWriteStream(path, {flags: 'w'});
 	return promisify(output.write).bind(output);
@@ -36,9 +24,11 @@ async function run() {
 	await writeAttrs(`export type HTMLAttribute<T extends HTMLTag> = AttributeMap[T] extends string ? AttributeMap[T] : never;\n`);
 
 	// Write tags
-	const writeTags = openFile('src/htmlTags.ts');
-	await writeTags(`import {_} from './index.js';\n\n`);
-	for (const [tag] of attrMap) await writeTags(template(tag));
+	const writeTags = openFile('src/tag/htmlTags.ts');
+	await writeTags(`import {tagFactory as $} from './factory.js';\n\n`);
+	await writeTags(`export const tags = {\n`);
+	for (const [tag] of attrMap) await writeTags(`\t${tag}: $('${tag}'),\n`);
+	await writeTags(`} as const;\n`);
 }
 
 await run();

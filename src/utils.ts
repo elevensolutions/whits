@@ -1,3 +1,5 @@
+import type {TagChild, TagContent} from './types.js';
+
 /**
  * Encodes special characters in a string to their corresponding HTML entities.
  * @param input The string to encode.
@@ -14,4 +16,14 @@ export function encodeEntities(input: string): string {
 		}).
 		replace(/</g, '&lt;').
 		replace(/>/g, '&gt;');
+}
+
+/**
+ * Loops over the given number of iterations and calls the given callback function for each iteration.
+ * @param count The number of iterations.
+ * @param callback The callback function.
+ * @returns An array of the return values of the callback function.
+ */
+export function loop(count: number, callback: (index: number) => TagChild): TagContent {
+	return Array.from({length: count}, ($$, i) => callback(i));
 }
