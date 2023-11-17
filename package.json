@@ -7,7 +7,7 @@
   "scripts": {
     "build": "rm -rf dist/* && npx tsc",
     "pretest": "cd tests && rm -rf dist/* && npx tsc",
-    "test": "npx jest",
+    "test": "npx jest --coverage",
     "tags": "node generateTags.mjs",
     "docs": "npx typedoc --out docs src"
   },
