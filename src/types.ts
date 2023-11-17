@@ -33,6 +33,16 @@ export type NonVoidTagName = Exclude<HTMLTag, VoidTagName>;
 export type SelectorString = {[K in HTMLTag]: `${K}${SelectorPart}`}[HTMLTag] | SelectorPart;
 
 /**
+ * A string that represents a CSS selector for a void tag.
+ */
+export type VoidSelectorString = {[K in VoidTagName]: `${K}${SelectorPart}`}[VoidTagName];
+
+/**
+ * A string that represents a CSS selector for a non-void tag.
+ */
+export type NonVoidSelectorString = {[K in NonVoidTagName]: `${K}${SelectorPart}`}[NonVoidTagName] | SelectorPart;
+
+/**
  * A string that represents the name of a tag based on its selector.
  * @template S The selector.
  */
