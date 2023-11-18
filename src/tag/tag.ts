@@ -27,9 +27,6 @@ export class Tag<S extends SelectorString, T extends SelectorName<S> = SelectorN
 	/** Optional content to insert before and/or after the tag. */
 	public readonly outerContent: Record<'before' | 'after', null | string | RawContent> = {before: null, after: null};
 
-	/** The class of the tag. */
-	public class: TagClass = new TagClass();
-
 	/** The style of the tag. */
 	public style: TagStyle = new TagStyle();
 
@@ -57,19 +54,22 @@ export class Tag<S extends SelectorString, T extends SelectorName<S> = SelectorN
 		Object.defineProperties(this.attributes, {
 			class: {
 				configurable: false, enumerable: true,
-				set: (v) => this.class = new TagClass(v),
-				get: () => this.class.toString()
+				set: (v) => this.selector.class = new TagClass(v),
+				get: () => this.selector.class.toString()
 			},
 			style: {
 				configurable: false, enumerable: true,
 				set: (v) => this.style = new TagStyle(v),
 				get: () => this.style.toString()
+			},
+			id: {
+				configurable: false, enumerable: true,
+				set: (v) => this.selector.id = v,
+				get: () => this.selector.id
 			}
 		});
 
-		if (this.selector.id) this.attributes.id = this.selector.id;
 		Object.assign(this.attributes, attributes);
-		this.class.add(...this.selector.class);
 	}
 
 	/**
@@ -107,6 +107,16 @@ export class Tag<S extends SelectorString, T extends SelectorName<S> = SelectorN
 	 */
 	public toString(): string {
 		return this.html;
+	}
+
+	/**
+	 * The class of the tag.
+	 */
+	public set class(value: TagClass) {
+		this.selector.class = value;
+	}
+	public get class(): TagClass {
+		return this.selector.class;
 	}
 
 	/**

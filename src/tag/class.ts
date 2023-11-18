@@ -10,8 +10,7 @@ export class TagClass {
 	 * @param value The initial value of the `class` attribute.
 	 */
 	constructor(value?: string | Set<string> | string[]) {
-		if (!value) return;
-		typeof value === 'string' ? this.add(value) : this.add(...value);
+		if (value) this.add(...(typeof value === 'string' ? value.split(' ') : value));
 	}
 
 	/**
@@ -38,10 +37,36 @@ export class TagClass {
 	}
 
 	/**
+	 * Checks whether the `class` attribute contains a class name.
+	 * @param value The class name to check.
+	 * @returns `true` if the `class` attribute contains the class name, otherwise `false`.
+	 */
+	public has(value: string): boolean {
+		return this.value.has(value);
+	}
+
+	/**
 	 * Returns a string representation of the `class` attribute.
 	 * @returns A string representation of the `class` attribute.
 	 */
 	public toString(): string {
 		return Array.from(this.value).join(' ');
+	}
+
+	/**
+	 * Returns a CSS selector string for the `class` attribute.
+	 * @returns A CSS selector string for the `class` attribute.
+	 */
+	public toSelector(): string {
+		if (!this.value.size) return '';
+		return `.${[...this.value].join('.')}`;
+	}
+
+	/**
+	 * Returns the number of class names in the `class` attribute.
+	 * @returns The number of class names in the `class` attribute.
+	 */
+	public get size(): number {
+		return this.value.size;
 	}
 }

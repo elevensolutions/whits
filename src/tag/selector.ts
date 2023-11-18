@@ -1,4 +1,5 @@
 import {SelectorName, SelectorString} from '../types.js';
+import {TagClass} from './class.js';
 
 /**
  * Represents a CSS-type selector.
@@ -14,15 +15,15 @@ export class Selector<S extends SelectorString, T extends SelectorName<S> = Sele
 	/** The ID of the selector. */
 	public id?: string;
 
-	/** The set of classes of the selector. */
-	public readonly class: Set<string> = new Set();
+	/** The class of the tag. */
+	public class: TagClass = new TagClass();
 
 	/**
 	 * Creates a new Selector instance.
 	 * @param selector The selector string to parse.
 	 */
 	constructor(selector: S = '' as S) {
-		const parts = [...(selector.replace(/\s+/g, '').matchAll(/(?<mod>[\.#])?(?<name>[\w_-]*)/g) || [])].filter((part) => part.groups?.name);
+		const parts = [...(selector.replace(/\s+/g, '').matchAll(/(?<mod>[\.#])?(?<name>[\w_-]*)/g))].filter((part) => part.groups?.name);
 		this.tag = (parts.find((part) => !part.groups?.mod)?.groups?.name || '') as T;
 		this.id = parts.find((part) => part.groups?.mod === '#')?.groups?.name;
 
@@ -38,7 +39,7 @@ export class Selector<S extends SelectorString, T extends SelectorName<S> = Sele
 	public toString(): SelectorString {
 		let str: SelectorString = this.tag || '';
 		if (this.id) str += `#${this.id}`;
-		if (this.class.size) str += `.${[...this.class].join('.')}`;
+		str += this.class.toSelector();
 		return str as SelectorString;
 	}
 }
