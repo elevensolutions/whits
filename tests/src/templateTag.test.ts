@@ -13,6 +13,14 @@ describe('Raw content', () => {
 		expect(content).toBeInstanceOf(RawContent);
 		expect(content.toString()).toBe('<div></div>');
 	});
+
+	test('RawContent instance can be cloned', () => {
+		const content = raw('<div></div>');
+		const clone = content.clone();
+		expect(clone).toBeInstanceOf(RawContent);
+		expect(clone.toString()).toBe('<div></div>');
+		expect(clone).not.toBe(content);
+	});
 });
 
 describe('Comment', () => {

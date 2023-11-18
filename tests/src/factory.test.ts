@@ -2,6 +2,11 @@ import {describe, expect, test} from '@jest/globals';
 import {$, Tag} from '../../dist';
 
 describe('Tag creation', () => {
+	test('Factory function is created properly', () => {
+		expect(typeof $).toBe('function');
+		expect(typeof $.div).toBe('function');
+	});
+
 	test('Basic div tag is created properly via query', () => {
 		const factory = $('div');
 		expect(typeof factory).toBe('function');
