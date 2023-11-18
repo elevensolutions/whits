@@ -1,5 +1,5 @@
 import {describe, expect, test} from '@jest/globals';
-import {$, RootTemplate, Template, comment, loop, raw} from '../../dist';
+import {$, RawContent, RootTemplate, Template, comment, loop, raw} from '../../dist';
 
 describe('Root template creation and rendering', () => {
 	test('Static root template is created and rendered properly', () => {
@@ -10,7 +10,7 @@ describe('Root template creation and rendering', () => {
 		expect(template).toBeInstanceOf(Template);
 		expect(template).toBeInstanceOf(RootTemplate);
 		expect(template.doctype).toBe('<!DOCTYPE html>');
-		expect(template.render()).toBe('<!DOCTYPE html>\n<html><head><title>Test</title></head><body><h1>Hello, world!</h1></body></html>');
+		expect(template.renderString()).toBe('<!DOCTYPE html>\n<html><head><title>Test</title></head><body><h1>Hello, world!</h1></body></html>');
 	});
 
 	test('Dynamic root template is created and rendered properly', () => {
@@ -32,7 +32,8 @@ describe('Root template creation and rendering', () => {
 		expect(template.doctype).toBe('<!DOCTYPE html>');
 
 		const rendered = template.render({x: 5, y: 'Hello, world!', z: ['a', 'b', 'c']});
-		expect(rendered).toBe(
+		expect(rendered).toBeInstanceOf(RawContent);
+		expect(rendered.toString()).toBe(
 			'<!DOCTYPE html>\n' +
 			'<html><head><title>Test</title></head><body>' +
 			'<div id="container"><h1>Hello, world!</h1>' +
@@ -50,7 +51,7 @@ describe('Root template creation and rendering', () => {
 		expect(template).toBeInstanceOf(Template);
 		expect(template).toBeInstanceOf(RootTemplate);
 		expect(template.doctype).toBe('<!DOCTYPE html5>');
-		expect(template.render()).toBe('<!DOCTYPE html5>\n<html><head><title>Test</title></head><body><h1>Hello, world!</h1></body></html>');
+		expect(template.renderString()).toBe('<!DOCTYPE html5>\n<html><head><title>Test</title></head><body><h1>Hello, world!</h1></body></html>');
 	});
 
 	test('Root template doctype can be disabled', () => {
@@ -61,7 +62,7 @@ describe('Root template creation and rendering', () => {
 		expect(template).toBeInstanceOf(Template);
 		expect(template).toBeInstanceOf(RootTemplate);
 		expect(template.doctype).toBeNull();
-		expect(template.render()).toBe('<html><head><title>Test</title></head><body><h1>Hello, world!</h1></body></html>');
+		expect(template.renderString()).toBe('<html><head><title>Test</title></head><body><h1>Hello, world!</h1></body></html>');
 	});
 
 	test('Root template root tag can be changed', () => {
@@ -72,7 +73,7 @@ describe('Root template creation and rendering', () => {
 		expect(template).toBeInstanceOf(Template);
 		expect(template).toBeInstanceOf(RootTemplate);
 		expect(template.doctype).toBeNull();
-		expect(template.render()).toBe('<body><head><title>Test</title></head><body><h1>Hello, world!</h1></body></body>');
+		expect(template.renderString()).toBe('<body><head><title>Test</title></head><body><h1>Hello, world!</h1></body></body>');
 	});
 
 	test('Root template root tag can be set dynamically', () => {
@@ -83,7 +84,7 @@ describe('Root template creation and rendering', () => {
 		expect(template1).toBeInstanceOf(Template);
 		expect(template1).toBeInstanceOf(RootTemplate);
 		expect(template1.doctype).toBe('<!DOCTYPE html>');
-		expect(template1.render({htmlClass: 'test'})).toBe('<!DOCTYPE html>\n<html class="test"><head><title>test</title></head><body><h1>Hello, world!</h1></body></html>');
+		expect(template1.renderString({htmlClass: 'test'})).toBe('<!DOCTYPE html>\n<html class="test"><head><title>test</title></head><body><h1>Hello, world!</h1></body></html>');
 
 		const template2 = new RootTemplate<{htmlClass: string}>((locals) => [
 			$.head([$.title(locals.htmlClass)]),
@@ -92,7 +93,7 @@ describe('Root template creation and rendering', () => {
 		expect(template2).toBeInstanceOf(Template);
 		expect(template2).toBeInstanceOf(RootTemplate);
 		expect(template2.doctype).toBe('<!DOCTYPE html>');
-		expect(template2.render({htmlClass: 'test'})).toBe('<!DOCTYPE html>\n<html class="test"><head><title>test</title></head><body><h1>Hello, world!</h1></body></html>');
+		expect(template2.renderString({htmlClass: 'test'})).toBe('<!DOCTYPE html>\n<html class="test"><head><title>test</title></head><body><h1>Hello, world!</h1></body></html>');
 	});
 });
 
@@ -103,7 +104,7 @@ describe('Template creation and rendering', () => {
 		]);
 		expect(template).toBeInstanceOf(Template);
 		expect(template).not.toBeInstanceOf(RootTemplate);
-		expect(template.render()).toBe('<div id="test">Hello, world!</div>');
+		expect(template.renderString()).toBe('<div id="test">Hello, world!</div>');
 	});
 
 	test('Dynamic template is created and rendered properly', () => {
@@ -121,7 +122,8 @@ describe('Template creation and rendering', () => {
 		expect(template).not.toBeInstanceOf(RootTemplate);
 
 		const rendered = template.render({x: 5, y: 'Hello, world!', z: ['a', 'b', 'c']});
-		expect(rendered).toBe(
+		expect(rendered).toBeInstanceOf(RawContent);
+		expect(rendered.toString()).toBe(
 			'<div id="container"><h1>Hello, world!</h1>' +
 			'<div class="item">a</div><div class="item">b</div><div class="item">c</div>' +
 			'<ul><li>Item 0</li><li>Item 1</li><li>Item 2</li><li>Item 3</li><li>Item 4</li></ul>' +
@@ -133,11 +135,11 @@ describe('Template creation and rendering', () => {
 		const template1 = new Template(null);
 		expect(template1).toBeInstanceOf(Template);
 		expect(template1).not.toBeInstanceOf(RootTemplate);
-		expect(template1.render()).toBe('');
+		expect(template1.renderString()).toBe('');
 
 		const template2 = new Template([]);
 		expect(template2).toBeInstanceOf(Template);
 		expect(template2).not.toBeInstanceOf(RootTemplate);
-		expect(template2.render()).toBe('');
+		expect(template2.renderString()).toBe('');
 	});
 });

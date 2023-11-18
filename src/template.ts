@@ -29,9 +29,18 @@ export class Template<T = void> {
 	 * @param locals The locals to pass to the template.
 	 * @returns The rendered template.
 	 */
-	public render(locals: T): string {
+	public renderString(locals: T): string {
 		const content = typeof this.content === 'function' ? this.content(locals) : this.content;
 		return Array.isArray(content) ? content.map((child) => this.stringifyContent(child)).join('') : this.stringifyContent(content) || '';
+	}
+
+	/**
+	 * Renders the template with the given locals (if `content` is a function).
+	 * @param locals The locals to pass to the template.
+	 * @returns The rendered template as a `RawContent` instance.
+	 */
+	public render(locals: T): RawContent {
+		return new RawContent(this.renderString(locals));
 	}
 
 	/**
@@ -72,9 +81,9 @@ export class RootTemplate<T = void> extends Template<T> {
 	 * @param locals The locals to pass to the template.
 	 * @returns The rendered template.
 	 */
-	public render(locals: T): string {
+	public renderString(locals: T): string {
 		const doctype = this.doctype ? `${this.doctype}\n` : '';
-		const content = raw(super.render(locals));
+		const content = new RawContent(super.renderString(locals));
 		const rootTag = typeof this.rootTag === 'function' ? this.rootTag(locals, content) : tags[this.rootTag](content);
 		return doctype + rootTag.toString();
 	}
