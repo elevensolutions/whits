@@ -1,0 +1,6 @@
+{
+	"dependencies": {
+		"@types/node": "^20.9.1",
+		"htts": "../dist"
+	}
+}
