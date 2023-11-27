@@ -1,15 +1,15 @@
+import {HTMLTag} from './htmlAttributes.js';
 import {RawContent} from './raw.js';
-import {tags} from './tag/htmlTags.js';
+import {htmlTags} from './tag/htmlTags.js';
 import {Tag} from './tag/tag.js';
-import {raw} from './templateTags.js';
-import type {AnyTag, NonVoidSelectorString, NonVoidTagName, TagChild, TagContent} from './types.js';
+import type {AnyHtmlTag, NonVoidSelectorString, NonVoidTagName, TagChild, TagContent} from './types.js';
 import {encodeEntities} from './utils.js';
 
 /**
  * Valid types for the content of a template.
  * Can be a Tag instance, raw content, a string, or an array of any of these.
  */
-type TemplateContent = TagContent | RawContent | AnyTag | string;
+type TemplateContent = TagContent<HTMLTag> | RawContent | AnyHtmlTag | string;
 
 /**
  * A template that can be used to render HTML content.
@@ -48,7 +48,7 @@ export class Template<T = void> {
 	 * @param child The child to stringify.
 	 * @returns The HTML string representation of the child.
 	 */
-	private stringifyContent(child?: TagChild): string {
+	private stringifyContent(child?: TagChild<any>): string {
 		if (!child) return '';
 		if (child instanceof Tag) return child.html;
 		if (child instanceof RawContent) return child.toString();
@@ -84,7 +84,7 @@ export class RootTemplate<T = void> extends Template<T> {
 	public renderString(locals: T): string {
 		const doctype = this.doctype ? `${this.doctype}\n` : '';
 		const content = new RawContent(super.renderString(locals));
-		const rootTag = typeof this.rootTag === 'function' ? this.rootTag(locals, content) : tags[this.rootTag](content);
+		const rootTag = typeof this.rootTag === 'function' ? this.rootTag(locals, content) : htmlTags[this.rootTag](content);
 		return doctype + rootTag.toString();
 	}
 }

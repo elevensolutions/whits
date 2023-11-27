@@ -19,7 +19,7 @@ export class Tag<S extends SelectorString, T extends SelectorName<S> = SelectorN
 	public readonly isVoid: T extends VoidTagName ? true : false;
 	
 	/** An array of child elements of the tag. */
-	public readonly children: T extends VoidTagName ? [] : TagContent;
+	public readonly children: T extends VoidTagName ? [] : TagContent<T>;
 	
 	/** The attributes of the tag. */
 	public readonly attributes: Partial<Attributes<T>> = {};

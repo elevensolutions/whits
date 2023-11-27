@@ -1,5 +1,5 @@
-export type GlobalAttribute = 'accesskey' | 'autocapitalize' | 'autofocus' | 'class' | 'contenteditable' | 'dir' | 'draggable' | 'enterkeyhint' | 'hidden' | 'id' | 'inert' | 'inputmode' | 'is' | 'itemid' | 'itemprop' | 'itemref' | 'itemscope' | 'itemtype' | 'lang' | 'nonce' | 'popover' | 'slot' | 'spellcheck' | 'style' | 'tabindex' | 'title' | 'translate';
-interface AttributeMap extends Record<keyof HTMLElementTagNameMap, string | undefined> {
+export type HTMLGlobalAttribute = 'accesskey' | 'autocapitalize' | 'autofocus' | 'class' | 'contenteditable' | 'dir' | 'draggable' | 'enterkeyhint' | 'hidden' | 'id' | 'inert' | 'inputmode' | 'is' | 'itemid' | 'itemprop' | 'itemref' | 'itemscope' | 'itemtype' | 'lang' | 'nonce' | 'popover' | 'slot' | 'spellcheck' | 'style' | 'tabindex' | 'title' | 'translate';
+interface HTMLAttributeMap extends Record<keyof HTMLElementTagNameMap, string | undefined> {
 	'a': 'charset' | 'coords' | 'download' | 'href' | 'hreflang' | 'name' | 'ping' | 'referrerpolicy' | 'rel' | 'rev' | 'shape' | 'target' | 'type';
 	'applet': 'align' | 'alt' | 'archive' | 'code' | 'codebase' | 'height' | 'hspace' | 'name' | 'object' | 'vspace' | 'width';
 	'area': 'alt' | 'coords' | 'download' | 'href' | 'hreflang' | 'nohref' | 'ping' | 'referrerpolicy' | 'rel' | 'shape' | 'target' | 'type';
@@ -150,5 +150,5 @@ interface AttributeMap extends Record<keyof HTMLElementTagNameMap, string | unde
 	'wbr': undefined;
 	'xmp': undefined;
 }
-export type HTMLTag = keyof AttributeMap;
-export type HTMLAttribute<T extends HTMLTag> = AttributeMap[T] extends string ? AttributeMap[T] : never;
+export type HTMLTag = keyof HTMLAttributeMap;
+export type HTMLAttribute<T extends HTMLTag> = HTMLAttributeMap[T] extends string ? HTMLAttributeMap[T] : never;

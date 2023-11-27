@@ -1,4 +1,6 @@
-import type {TagChild, TagContent} from './types.js';
+import {HTMLTag} from './htmlAttributes.js';
+import {SVGTag} from './svgAttributes.js';
+import type {TagChild} from './types.js';
 
 /**
  * Encodes special characters in a string to their corresponding HTML entities.
@@ -28,6 +30,6 @@ export function encodeEntities(input: string): string {
  * @param callback The callback function.
  * @returns An array of the return values of the callback function.
  */
-export function loop(count: number, callback: (index: number) => TagChild): TagContent {
+export function loop<T extends TagChild<any>>(count: number, callback: (index: number) => T): T[] {
 	return Array.from({length: count}, ($$, i) => callback(i));
 }
