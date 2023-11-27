@@ -1,9 +1,17 @@
 {
-	"name": "htts",
-	"version": "0.1.0",
+	"name": "@elevensolutions/htts",
+	"version": "0.2.0",
 	"description": "HyperText TypeScript Templating System",
 	"author": "ELEVEN",
 	"license": "MPL-2.0",
+	"repository": {
+		"type": "git",
+		"url": "git+ssh://git@github.com/elevensolutions/htts.git"
+	},
+	"publishConfig": {
+		"@elevensolutions:registry": "https://npm.pkg.github.com",
+		"access": "public"
+	},
 	"scripts": {
 		"build": "rm -rf dist/* && npx tsc",
 		"pretest": "cd tests && rm -rf dist/* && npx tsc",
