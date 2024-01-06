@@ -141,7 +141,6 @@ interface HTMLAttributeMap extends Record<keyof HTMLElementTagNameMap, string | 
 	'sub': undefined;
 	'summary': undefined;
 	'sup': undefined;
-	'svg': undefined;
 	'template': undefined;
 	'title': undefined;
 	'tt': undefined;

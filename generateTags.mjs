@@ -16,7 +16,7 @@ function openFile(path) {
  */
 async function run(language) {
 	const attributes = language === 'html' ? htmlElementAttributes : svgElementAttributes;
-	const tagNames = language === 'html' ? htmlTagNames : svgTagNames;
+	const tagNames = language === 'html' ? htmlTagNames.filter((tag) => tag !== 'svg') : svgTagNames;
 	const langUpper = language.toUpperCase();
 
 	const globalTypes = attributes['*'];

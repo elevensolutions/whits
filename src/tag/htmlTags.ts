@@ -142,7 +142,6 @@ export const htmlTags = {
 	'sub': $('sub'),
 	'summary': $('summary'),
 	'sup': $('sup'),
-	'svg': $('svg'),
 	'template': $('template'),
 	'title': $('title'),
 	'tt': $('tt'),
