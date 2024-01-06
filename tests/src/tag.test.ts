@@ -1,8 +1,8 @@
 import {describe, expect, test} from '@jest/globals';
-import {$, RawContent, Tag, comment, raw} from '../../dist';
-import {TagClass} from '../../dist/tag/class';
-import {TagStyle} from '../../dist/tag/style';
-import {Selector} from '../../dist/tag/selector';
+import {$, RawContent, Tag, comment, raw} from '../../dist/index.js';
+import {TagClass} from '../../dist/tag/class.js';
+import {TagStyle} from '../../dist/tag/style.js';
+import {Selector} from '../../dist/tag/selector.js';
 
 describe('Tag creation and manipulation', () => {
 	const tag = new Tag();

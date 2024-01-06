@@ -1,5 +1,5 @@
 import {describe, expect, test} from '@jest/globals';
-import {RawContent, Tag, comment, css, javascript, raw} from '../../dist';
+import {RawContent, Tag, comment, css, javascript, raw} from '../../dist/index.js';
 
 describe('Raw content', () => {
 	test('RawContent instance is created properly via template literal', () => {

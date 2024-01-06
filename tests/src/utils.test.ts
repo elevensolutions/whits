@@ -1,5 +1,5 @@
 import {describe, expect, test} from '@jest/globals';
-import {$, Tag, encodeEntities, loop} from '../../dist';
+import {$, Tag, encodeEntities, loop} from '../../dist/index.js';
 
 describe('Utils', () => {
 	test('Entities are encoded properly', () => {
