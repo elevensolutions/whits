@@ -1,5 +1,5 @@
-import {$, RootTemplate} from 'htts'
-import containerTemplate from './containerTemplate';
+import {$, RootTemplate} from 'whits';
+import containerTemplate from './containerTemplate.js';
 
 export default new RootTemplate([
 	$.head([

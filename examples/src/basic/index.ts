@@ -1,5 +1,5 @@
 import {createServer} from 'http';
-import rootTemplate from './rootTemplate';
+import rootTemplate from './rootTemplate.js';
 
 const server = createServer((req, res) => {
 	if (req.method === 'GET' && req.url === '/') {

@@ -1,4 +1,4 @@
-import {$, comment, javascript, loop, raw, Template} from 'htts';
+import {$, comment, javascript, loop, raw, Template} from 'whits';
 
 // Export a dynamic template that implements a callback function, which accepts a params object.
 // The params object is typed based on the template's generic type parameter.
