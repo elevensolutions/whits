@@ -1,5 +1,9 @@
 # `whits` - Write HTML in TypeScript
 
+[![build & test](https://img.shields.io/github/actions/workflow/status/elevensolutions/whits/build.yml?style=flat&label=build%20%26%20test&logo=github)](https://github.com/elevensolutions/whits/actions/workflows/build.yml)
+![coverage](https://img.shields.io/endpoint?url=https%3A%2F%2Fgist.githubusercontent.com%2Felevenadmin%2Fa1557037f77868d0594ea5e610d9c3b7%2Fraw%2F4a0f76f8f935eaf0646f5d88d051c966e4fcfc10%2Fbadge.json)
+
+
 `whits` is a Node.js library that generates HTML code programmatically with all the advantages of TypeScript, such as 
 type-checking, autocompletion, decorators, etc. It provides a clean and concise way to create dynamic HTML templates, 
 with types that provide safeguards against generating invalid HTML.
