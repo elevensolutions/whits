@@ -169,15 +169,27 @@ See the [basic code example](examples/src/basic/) for details.
 ## Generating static HTML
 Generating static HTML files is also a simple process, which comes down to 4 steps:
 1. Name the files you want to compile `*.html.ts`. The compiler will ignore other files.
-2. Export the output of `Template.render()` as the default export:
+2. Set the default export of the template files. It can be any of the following:
    ```typescript
-   export default template.render(params);
+   // RootTemplate.render() output, passing a predefined params object
+   export default (new RootTemplate<{foo: string}>(({foo}) => [$.div(foo)])).render({foo: 'bar'});
+
+   // A RootTemplate instance, receiving the params object from the command line
+   export default new RootTemplate<{foo: string}>(({foo}) => [$.div(foo)]);
+
+   // A RootTemplate instance with no params
+   export default new RootTemplate([$.div('bar')]);
+
+   // Any other string or instance of Template, RootTemplate, or RawContent is acceptable.
+   export default 'This string will be escaped.';
+   export default raw('<template>This is an HTML <b>template</b> partial.</template>');
    ```
 3. Compile TS => JS (using `tsc` or similar)
-4. Run the `whits` cli, passing the input directory and output directory as arguments:
+4. Run the `whits` cli, passing the input/output directories and (optional) params object as arguments:
    ```bash
    # The input should be your dist dir, where your compiled JS files are
-   npx whits dist html
+   # npx whits <input> <output> [params]
+   npx whits dist html '{"foo": "bar"}'
    ```
 See the [static code example](examples/src/static/) for details.
 

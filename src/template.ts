@@ -12,10 +12,16 @@ import {encodeEntities} from './utils.js';
 type TemplateContent = TagContent<HTMLTag> | RawContent | AnyHtmlTag | string;
 
 /**
+ * Valid types for the params of a template.
+ * Can be any object or void.
+ */
+type TemplateParams = {} | void | undefined;
+
+/**
  * A template that can be used to render HTML content.
  * @template T The type of the template's params.
  */
-export class Template<T = void> {
+export class Template<T extends TemplateParams = void> {
 	/**
 	 * Creates a new template.
 	 * @param content The content of the template, or a function that returns the content.
@@ -61,7 +67,7 @@ export class Template<T = void> {
  * Automatically adds a doctype and root tag to the rendered content.
  * @template T The type of the template's params.
  */
-export class RootTemplate<T = void> extends Template<T> {
+export class RootTemplate<T extends TemplateParams = void> extends Template<T> {
 	/**
 	 * Creates a new root template.
 	 * @param content The content of the template, or a function that returns the content.

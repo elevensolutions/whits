@@ -12,7 +12,6 @@ declare module 'expect' {
 const toHaveNoCircularDeps: MatcherFunction = function(received: MadgeInstance) {
 	if (!('circular' in received)) throw new Error('Not a Madge instance');
 	const deps = received.circular();
-	console.log(received.obj());
 	const {printExpected, printReceived, RECEIVED_COLOR} = this.utils;
 	return {
 		message: () => [
