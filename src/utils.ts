@@ -1,5 +1,3 @@
-import {HTMLTag} from './htmlAttributes.js';
-import {SVGTag} from './svgAttributes.js';
 import type {TagChild} from './types.js';
 
 /**
