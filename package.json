@@ -1,7 +1,7 @@
 {
 	"name": "whits",
 	"version": "1.0.2",
-	"description": "HyperText TypeScript Templating System",
+	"description": "Write HTML in TypeScript",
 	"author": {
 		"name": "ELEVEN",
 		"url": "https://think11.com"
@@ -18,8 +18,8 @@
 	},
 	"scripts": {
 		"build": "rm -rf dist/* && npx tsc && chmod +x dist/cli.js",
-		"pretest": "cd tests && rm -rf dist/* && npx tsc",
-		"test": "NODE_OPTIONS='--experimental-vm-modules --no-warnings' npx jest --coverage --coverageReporters=json-summary",
+		"pretest": "rm -rf coverage && cd tests && rm -rf dist/* && npx tsc",
+		"test": "NODE_OPTIONS='--experimental-vm-modules --no-warnings' npx jest",
 		"posttest": "node tests/coverage-badge.mjs",
 		"tags": "node generateTags.mjs",
 		"docs": "npx typedoc --out docs src"
