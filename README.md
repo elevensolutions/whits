@@ -186,5 +186,4 @@ Contributions to `whits` are welcome! To contribute, please fork the repository 
 ## Future enhancements
 - Advanced usage documentation
 - Extending/custom tags capability
-- Add unit test for circular deps
 - Automatically deploy docs
