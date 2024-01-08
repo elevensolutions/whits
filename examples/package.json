@@ -5,6 +5,6 @@
 	},
 	"dependencies": {
 		"@types/node": "^20.9.1",
-		"whits": "^1.0.0"
+		"whits": "../"
 	}
 }
