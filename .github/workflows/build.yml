@@ -32,4 +32,4 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GIST_TOKEN }}
           GIST_ID: ${{ secrets.GIST_ID }}
-        run: gh gist edit $GIST_ID -a coverage/coverage-summary.json
+        run: gh gist edit $GIST_ID -a coverage/badge.json
