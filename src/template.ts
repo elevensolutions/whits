@@ -13,7 +13,7 @@ type TemplateContent = TagContent<HTMLTag> | RawContent | AnyHtmlTag | string;
 
 /**
  * A template that can be used to render HTML content.
- * @template T The type of the template's locals.
+ * @template T The type of the template's params.
  */
 export class Template<T = void> {
 	/**
@@ -21,26 +21,26 @@ export class Template<T = void> {
 	 * @param content The content of the template, or a function that returns the content.
 	 */
 	constructor(
-		public readonly content: TemplateContent | ((locals: T) => TemplateContent)
+		public readonly content: TemplateContent | ((params: T) => TemplateContent)
 	) {}
 
 	/**
-	 * Renders the template with the given locals (if `content` is a function).
-	 * @param locals The locals to pass to the template.
+	 * Renders the template with the given params (if `content` is a function).
+	 * @param params The params to pass to the template.
 	 * @returns The rendered template.
 	 */
-	public renderString(locals: T): string {
-		const content = typeof this.content === 'function' ? this.content(locals) : this.content;
+	public renderString(params: T): string {
+		const content = typeof this.content === 'function' ? this.content(params) : this.content;
 		return Array.isArray(content) ? content.map((child) => this.stringifyContent(child)).join('') : this.stringifyContent(content) || '';
 	}
 
 	/**
-	 * Renders the template with the given locals (if `content` is a function).
-	 * @param locals The locals to pass to the template.
+	 * Renders the template with the given params (if `content` is a function).
+	 * @param params The params to pass to the template.
 	 * @returns The rendered template as a `RawContent` instance.
 	 */
-	public render(locals: T): RawContent {
-		return new RawContent(this.renderString(locals));
+	public render(params: T): RawContent {
+		return new RawContent(this.renderString(params));
 	}
 
 	/**
@@ -59,7 +59,7 @@ export class Template<T = void> {
 /**
  * A template that can be used to render the root HTML content.
  * Automatically adds a doctype and root tag to the rendered content.
- * @template T The type of the template's locals.
+ * @template T The type of the template's params.
  */
 export class RootTemplate<T = void> extends Template<T> {
 	/**
@@ -69,22 +69,22 @@ export class RootTemplate<T = void> extends Template<T> {
 	 * @param rootTag The root tag to use for the template. Defaults to `html`.
 	 */
 	constructor(
-		content: TemplateContent | ((locals: T) => TemplateContent),
+		content: TemplateContent | ((params: T) => TemplateContent),
 		public doctype: string | null = '<!DOCTYPE html>',
-		public rootTag: NonVoidTagName | ((locals: T, content: RawContent) => Tag<NonVoidSelectorString>) = 'html'
+		public rootTag: NonVoidTagName | ((params: T, content: RawContent) => Tag<NonVoidSelectorString>) = 'html'
 	) {
 		super(content);
 	}
 
 	/**
-	 * Renders the template with the given locals (if `content` is a function).
-	 * @param locals The locals to pass to the template.
+	 * Renders the template with the given params (if `content` is a function).
+	 * @param params The params to pass to the template.
 	 * @returns The rendered template.
 	 */
-	public renderString(locals: T): string {
+	public renderString(params: T): string {
 		const doctype = this.doctype ? `${this.doctype}\n` : '';
-		const content = new RawContent(super.renderString(locals));
-		const rootTag = typeof this.rootTag === 'function' ? this.rootTag(locals, content) : htmlTags[this.rootTag](content);
+		const content = new RawContent(super.renderString(params));
+		const rootTag = typeof this.rootTag === 'function' ? this.rootTag(params, content) : htmlTags[this.rootTag](content);
 		return doctype + rootTag.toString();
 	}
 }

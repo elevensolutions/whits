@@ -1,30 +1,30 @@
 import {$, comment, javascript, loop, raw, Template} from 'htts';
 
-// Export a dynamic template that implements a callback function, which accepts a locals object.
-// The locals object is typed based on the template's generic type parameter.
+// Export a dynamic template that implements a callback function, which accepts a params object.
+// The params object is typed based on the template's generic type parameter.
 export default new Template<{liItems: number, heading: string, divItems: string[]}>(
 
 	// The template returns a `Tag` object, which is created by the `$` function.
 	// You can pass a CSS-style selector to the `$` function to create a `Tag` factory.
 	// The `Tag` factory is a function that accepts attributes and content and returns a `Tag` object.
 	// If no tag name is specified, the default is a `div` tag.
-	(locals) => $('#container')([
+	(params) => $('#container')([
 
 		// The first child of the container is an `h1` tag with the value of the `heading` property.
 		// The `$.h1` method is a shortcut for creating `h1` tags. All HTML tags have a corresponding method.
-		$.h1(locals.heading),
+		$.h1(params.heading),
 
 		// The next children are `div.item` elements mapped from the `divItems` property.
 		// This simply uses the `Array.map` method to create a mapped array.
 		// The mapped array is then passed as separate children by using the spread operator.
-		...locals.divItems.map((item) => $('.item')(item)),
+		...params.divItems.map((item) => $('.item')(item)),
 
 		// The next child is a `ul` tag with children created by the `loop` function.
 		$.ul(
 			// The `loop` function calls the specified callback function the specified number of times.
 			// In this case, the result is an array of `li` tags with the text 'Item i', where `i` is the index of the item.
 			// The number of items here is specified by the `liItems` property.
-			loop(locals.liItems, (i) => $.li('Item ' + i))
+			loop(params.liItems, (i) => $.li('Item ' + i))
 		),
 
 		// Use the following functions with caution, as they can be used to create invalid or insecure HTML.

@@ -157,7 +157,7 @@ $.div([
 You can create HTML template files by exporting instances of the `Template` and `RootTemplate` classes, which include 
 methods for rendering the content as a string. The `Template` constructor allows passing the template content as a 
 Tag instance, raw content, a string, or an array of any of these. Alternatively, you can pass a function that returns 
-the content in any of those formats. The function accepts a `locals` object which you can use to pass variables from 
+the content in any of those formats. The function accepts a `params` object which you can use to pass variables from 
 your application code.
 
 See the [basic code example](examples/src/basic/) for details.

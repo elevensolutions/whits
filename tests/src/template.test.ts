@@ -14,13 +14,13 @@ describe('Root template creation and rendering', () => {
 	});
 
 	test('Dynamic root template is created and rendered properly', () => {
-		const template = new RootTemplate<{x: number, y: string, z: string[]}>((locals) => [
+		const template = new RootTemplate<{x: number, y: string, z: string[]}>((params) => [
 			$.head([$.title('Test')]),
 			$.body([
 				$('#container')([
-					$.h1(locals.y),
-					...locals.z.map((item) => $('.item')(item)),
-					$.ul(loop(locals.x, (i) => $.li('Item ' + i)))
+					$.h1(params.y),
+					...params.z.map((item) => $('.item')(item)),
+					$.ul(loop(params.x, (i) => $.li('Item ' + i)))
 				]),
 				'Escaped text <>',
 				raw`<!-- Comment 1 -->`,
@@ -77,19 +77,19 @@ describe('Root template creation and rendering', () => {
 	});
 
 	test('Root template root tag can be set dynamically', () => {
-		const template1 = new RootTemplate<{htmlClass: string}>((locals) => [
-			$.head([$.title(locals.htmlClass)]),
+		const template1 = new RootTemplate<{htmlClass: string}>((params) => [
+			$.head([$.title(params.htmlClass)]),
 			$.body([$.h1('Hello, world!')])
-		], undefined, (locals, content) => $.html({class: locals.htmlClass}, content));
+		], undefined, (params, content) => $.html({class: params.htmlClass}, content));
 		expect(template1).toBeInstanceOf(Template);
 		expect(template1).toBeInstanceOf(RootTemplate);
 		expect(template1.doctype).toBe('<!DOCTYPE html>');
 		expect(template1.renderString({htmlClass: 'test'})).toBe('<!DOCTYPE html>\n<html class="test"><head><title>test</title></head><body><h1>Hello, world!</h1></body></html>');
 
-		const template2 = new RootTemplate<{htmlClass: string}>((locals) => [
-			$.head([$.title(locals.htmlClass)]),
+		const template2 = new RootTemplate<{htmlClass: string}>((params) => [
+			$.head([$.title(params.htmlClass)]),
 			$.body([$.h1('Hello, world!')])
-		], undefined, (locals, content) => $(`html.${locals.htmlClass}`)(content));
+		], undefined, (params, content) => $(`html.${params.htmlClass}`)(content));
 		expect(template2).toBeInstanceOf(Template);
 		expect(template2).toBeInstanceOf(RootTemplate);
 		expect(template2.doctype).toBe('<!DOCTYPE html>');
@@ -108,11 +108,11 @@ describe('Template creation and rendering', () => {
 	});
 
 	test('Dynamic template is created and rendered properly', () => {
-		const template = new Template<{x: number, y: string, z: string[]}>((locals) => [
+		const template = new Template<{x: number, y: string, z: string[]}>((params) => [
 			$('#container')([
-				$.h1(locals.y),
-				...locals.z.map((item) => $('.item')(item)),
-				$.ul(loop(locals.x, (i) => $.li('Item ' + i)))
+				$.h1(params.y),
+				...params.z.map((item) => $('.item')(item)),
+				$.ul(loop(params.x, (i) => $.li('Item ' + i)))
 			]),
 			'Escaped text <>',
 			raw`<!-- Comment 1 -->`,
