@@ -1,20 +1,20 @@
-# HTTS - HyperText TypeScript
+# `whits` - Write HTML in TypeScript
 
-HTTS is a Node.js library that generates HTML code programmatically with all the advantages of TypeScript, such as 
+`whits` is a Node.js library that generates HTML code programmatically with all the advantages of TypeScript, such as 
 type-checking, autocompletion, decorators, etc. It provides a clean and concise way to create dynamic HTML templates, 
 with types that provide safeguards against generating invalid HTML.
 
 ## Installation
 ```
-npm install htts
+npm install whits
 ```
 
 ## Basic Usage
 
 ### Import `$`
-To use HTTS in your TypeScript project, you can import the `$` object.
+To use `whits` in your TypeScript project, you can import the `$` object.
 ```typescript
-import {$} from 'htts';
+import {$} from 'whits';
 ```
 
 ### Creating tags
@@ -102,7 +102,7 @@ $.main([
 By default, strings are escaped automatically. You can import and use the `raw`, `comment`, `css`, and `javascript` 
 template literal functions to pass unescaped content as children into a tag.
 ```typescript
-import {$, comment, css, javascript, raw} from 'htts';
+import {$, comment, css, javascript, raw} from 'whits';
 
 // Use the `raw` function to insert raw, unescaped HTML content, either as a template tag or a function call
 // This should be used sparingly, as it can be unsafe and error-prone
@@ -162,15 +162,29 @@ your application code.
 
 See the [basic code example](examples/src/basic/) for details.
 
+## Generating static HTML
+Generating static HTML files is also a simple process, which comes down to 4 steps:
+1. Name the files you want to compile `*.html.ts`. The compiler will ignore other files.
+2. Export the output of `Template.render()` as the default export:
+   ```typescript
+   export default template.render(params);
+   ```
+3. Compile TS => JS (using `tsc` or similar)
+4. Run the `whits` cli, passing the input directory and output directory as arguments:
+   ```bash
+   # The input should be your dist dir, where your compiled JS files are
+   npx whits dist html
+   ```
+See the [static code example](examples/src/static/) for details.
+
 ## Contributing
-Contributions to HTTS are welcome! To contribute, please fork the repository and submit a pull request.
+Contributions to `whits` are welcome! To contribute, please fork the repository and submit a pull request.
 
 ## License
-HTTS is licensed under the MPL-2.0 License. See [LICENSE](LICENSE) for more information.
+`whits` is licensed under the MPL-2.0 License. See [LICENSE](LICENSE) for more information.
 
-## TODO
+## Future enhancements
 - Advanced usage documentation
 - Extending/custom tags capability
-- CLI capabilities
 - Add unit test for circular deps
 - Automatically deploy docs

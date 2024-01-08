@@ -1,5 +1,5 @@
 {
-	"name": "htts",
+	"name": "whits",
 	"version": "1.0.0",
 	"description": "HyperText TypeScript Templating System",
 	"author": {
@@ -10,14 +10,14 @@
 	"type": "module",
 	"repository": {
 		"type": "git",
-		"url": "git+ssh://git@github.com/elevensolutions/htts.git"
+		"url": "git+ssh://git@github.com/elevensolutions/whits.git"
 	},
 	"publishConfig": {
 		"@elevensolutions:registry": "https://npm.pkg.github.com",
 		"access": "public"
 	},
 	"scripts": {
-		"build": "rm -rf dist/* && npx tsc && chmod +x dist/htts.js",
+		"build": "rm -rf dist/* && npx tsc && chmod +x dist/cli.js",
 		"pretest": "cd tests && rm -rf dist/* && npx tsc",
 		"test": "NODE_OPTIONS='--experimental-vm-modules --no-warnings' npx jest --coverage",
 		"tags": "node generateTags.mjs",
@@ -40,5 +40,5 @@
 	"exports": {
 		".": "./dist/index.js"
 	},
-	"bin": "./dist/htts.js"
+	"bin": "./dist/cli.js"
 }

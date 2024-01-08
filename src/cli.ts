@@ -42,7 +42,7 @@ class CLI {
 	}
 
 	private usage(): void {
-		console.error('Usage: htts <input> <output>');
+		console.error('Usage: whits <input> <output>');
 		console.error('  input  - path to the input file or directory');
 		console.error('  output - path to the output directory');
 		process.exit(1);
