@@ -29,7 +29,7 @@ async function run(language) {
 	// Write attributes
 	const writeAttrs = openFile(`src/${language}Attributes.ts`);
 	await writeAttrs(`export type ${langUpper}GlobalAttribute = ${globalTypes.map((value) => `'${value}'`).join(' | ')};\n`);
-	await writeAttrs(`interface ${langUpper}AttributeMap extends Record<keyof ${langUpper}ElementTagNameMap, string | undefined> {\n${attrMapString.join('\n')}\n}\n`);
+	await writeAttrs(`export interface ${langUpper}AttributeMap extends Record<keyof ${langUpper}ElementTagNameMap, string | undefined> {\n${attrMapString.join('\n')}\n}\n`);
 	await writeAttrs(`export type ${langUpper}Tag = keyof ${langUpper}AttributeMap;\n`)
 	await writeAttrs(`export type ${langUpper}Attribute<T extends ${langUpper}Tag> = ${langUpper}AttributeMap[T] extends string ? ${langUpper}AttributeMap[T] : never;\n`);
 

@@ -1,6 +1,6 @@
 {
 	"name": "whits",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"description": "Write HTML in TypeScript",
 	"author": {
 		"name": "ELEVEN",
@@ -22,7 +22,7 @@
 		"test": "NODE_OPTIONS='--experimental-vm-modules --no-warnings' npx jest",
 		"posttest": "node tests/coverage-badge.mjs",
 		"tags": "node generateTags.mjs",
-		"docs": "npx typedoc --out docs src"
+		"docs": "npx typedoc --cleanOutputDir --out docs src"
 	},
 	"devDependencies": {
 		"@jest/globals": "^29.7.0",
@@ -40,7 +40,8 @@
 		"*.d.ts"
 	],
 	"exports": {
-		".": "./dist/index.js"
+		".": "./dist/index.js",
+		"./tag": "./dist/tag/index.js"
 	},
 	"bin": "./dist/cli.js"
 }

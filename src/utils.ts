@@ -1,4 +1,4 @@
-import type {TagChild} from './types.js';
+import type {TagChild} from './tag/tag.js';
 
 /**
  * Encodes special characters in a string to their corresponding HTML entities.

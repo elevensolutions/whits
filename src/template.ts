@@ -1,21 +1,21 @@
+import type {AnyHtmlTag, NonVoidSelectorString, NonVoidTagName} from './tag/selector.js';
 import {HTMLTag} from './htmlAttributes.js';
 import {RawContent} from './raw.js';
 import {htmlTags} from './tag/htmlTags.js';
-import {Tag} from './tag/tag.js';
-import type {AnyHtmlTag, NonVoidSelectorString, NonVoidTagName, TagChild, TagContent} from './types.js';
+import {Tag, TagChild, TagContent} from './tag/tag.js';
 import {encodeEntities} from './utils.js';
 
 /**
  * Valid types for the content of a template.
  * Can be a Tag instance, raw content, a string, or an array of any of these.
  */
-type TemplateContent = TagContent<HTMLTag> | RawContent | AnyHtmlTag | string;
+export type TemplateContent = TagContent<HTMLTag> | RawContent | AnyHtmlTag | string;
 
 /**
  * Valid types for the params of a template.
  * Can be any object or void.
  */
-type TemplateParams = {} | void | undefined;
+export type TemplateParams = {} | void | undefined;
 
 /**
  * A template that can be used to render HTML content.

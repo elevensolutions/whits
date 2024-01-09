@@ -1,5 +1,5 @@
 import {describe, test, expect} from '@jest/globals';
-import {Tag} from '../../dist/index.js';
+import {Tag} from 'whits/tag';
 
 describe('Void tag creation and manipulation', () => {
 	const tag = new Tag('img', {src: 'image.png', alt: 'An image'});

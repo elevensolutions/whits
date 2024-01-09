@@ -1,10 +1,68 @@
-import type {Attributes, AttributesArg, ChildrenArg, SelectorString, SelectorName, TagContent, VoidTagName} from '../types.js';
+import type {HTMLAttribute, HTMLGlobalAttribute, HTMLTag} from '../htmlAttributes.js';
+import type {SVGAttribute, SVGGlobalAttribute, SVGTag} from '../svgAttributes.js';
+import type {AnyHtmlTag, AnySvgTag, SelectorName, SelectorString, VoidTagName} from './selector.js';
+import {Selector} from './selector.js';
 import {RawContent} from '../raw.js';
 import {encodeEntities} from '../utils.js';
 import {TagClass} from './class.js';
 import {TagStyle} from './style.js';
 import voids from './voids.js';
-import {Selector} from './selector.js';
+
+/**
+ * Represents a child of a tag.
+ */
+export type TagChild<T extends HTMLTag | SVGTag> = (T extends HTMLTag ? AnyHtmlTag | Tag<SVGTag, 'svg'> : AnySvgTag) | RawContent | string;
+
+/**
+ * Represents a function that creates a child of a tag.
+ */
+export type TagChildFactory<T extends HTMLTag | SVGTag> = (...args: any[]) => TagChild<T>;
+
+/**
+ * An array of `Tag`, `RawContent`, or string values that represent the content or children of a tag.
+ */
+export type TagContent<T extends HTMLTag | SVGTag> = TagChild<T>[];
+
+/**
+ * An object that represents the attributes of an HTML tag.
+ * It is a record type that maps attribute names to their values.
+ * @template T The HTML tag name.
+ */
+export type Attributes<T extends HTMLTag> = Record<HTMLAttribute<T> | `data-${string}` | HTMLGlobalAttribute, string | boolean>;
+
+/**
+ * An object that represents the attributes of an SVG tag.
+ * It is a record type that maps attribute names to their values.
+ * @template T The SVG tag name.
+ */
+export type SvgAttributes<T extends SVGTag> = Record<SVGAttribute<T> | `data-${string}` | SVGGlobalAttribute, string | boolean>;
+
+/**
+ * Represents an object that can be used to specify attributes for an HTML or SVG element.
+ * @template T The tag name.
+ */
+export type AttributesArg<T extends HTMLTag | SVGTag> = Partial<(T extends HTMLTag ? Attributes<T> : T extends SVGTag ? SvgAttributes<T> : never) | {
+	class: string[] | Set<string>;
+	style: Record<string, string> | Map<string, string>;
+}>;
+
+/**
+ * Represents an object that can be used to specify children for an HTML element.
+ * @template T The HTML tag name.
+ */
+export type HtmlChildrenArg<T extends HTMLTag> = T extends VoidTagName ? undefined : (TagChild<HTMLTag> | TagChildFactory<HTMLTag>)[] | TagChildFactory<HTMLTag> | RawContent | string;
+
+/**
+ * Represents an object that can be used to specify children for an SVG element.
+ * @template T The SVG tag name.
+ */
+export type SvgChildrenArg = (TagChild<SVGTag> | TagChildFactory<SVGTag>)[] | TagChildFactory<SVGTag> | RawContent | string;
+
+/**
+ * Represents an object that can be used to specify children for an HTML or SVG element.
+ */
+export type ChildrenArg<T extends HTMLTag | SVGTag> = T extends HTMLTag ? HtmlChildrenArg<T> : SvgChildrenArg;
+
 
 /**
  * Represents an HTML tag with its attributes and children.

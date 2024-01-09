@@ -1,5 +1,5 @@
 import {describe, expect, test} from '@jest/globals';
-import {$, RawContent, RootTemplate, Template, comment, loop, raw} from '../../dist/index.js';
+import {$, RawContent, RootTemplate, Template, comment, loop, raw} from 'whits';
 
 describe('Root template creation and rendering', () => {
 	test('Static root template is created and rendered properly', () => {

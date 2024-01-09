@@ -1,5 +1,6 @@
 import {describe, expect, test} from '@jest/globals';
-import {$, Tag} from '../../dist/index.js';
+import {$} from 'whits';
+import {Tag} from 'whits/tag';
 
 describe('Tag creation', () => {
 	test('Factory function is created properly', () => {
