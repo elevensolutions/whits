@@ -1,7 +1,8 @@
 # `whits` - Write HTML in TypeScript
 
 [![build & test](https://img.shields.io/github/actions/workflow/status/elevensolutions/whits/build.yml?style=flat&label=build%20%26%20test&logo=github)](https://github.com/elevensolutions/whits/actions/workflows/build.yml)
-![coverage](https://img.shields.io/endpoint?url=https%3A%2F%2Fgist.githubusercontent.com%2Felevenadmin%2Fa1557037f77868d0594ea5e610d9c3b7%2Fraw%2Fbadge.json)
+[![docs](https://img.shields.io/github/actions/workflow/status/elevensolutions/whits/docs.yml?style=flat&label=docs&logo=github)](https://github.com/elevensolutions/whits/actions/workflows/docs.yml)
+[![coverage](https://img.shields.io/endpoint?url=https%3A%2F%2Fgist.githubusercontent.com%2Felevenadmin%2Fa1557037f77868d0594ea5e610d9c3b7%2Fraw%2Fbadge.json)](https://github.com/elevensolutions/whits/actions/workflows/build.yml)
 
 
 `whits` is a Node.js library that generates HTML code programmatically with all the advantages of TypeScript, such as 
@@ -201,4 +202,3 @@ Contributions to `whits` are welcome! To contribute, please fork the repository 
 ## Future enhancements
 - Advanced usage documentation
 - Extending/custom tags capability
-- Automatically deploy docs
