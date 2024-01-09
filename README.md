@@ -1,7 +1,7 @@
 # `whits` - Write HTML in TypeScript
 
 [![build & test](https://img.shields.io/github/actions/workflow/status/elevensolutions/whits/build.yml?style=flat&label=build%20%26%20test&logo=github)](https://github.com/elevensolutions/whits/actions/workflows/build.yml)
-![coverage](https://img.shields.io/endpoint?url=https%3A%2F%2Fgist.githubusercontent.com%2Felevenadmin%2Fa1557037f77868d0594ea5e610d9c3b7%2Fraw%2F4a0f76f8f935eaf0646f5d88d051c966e4fcfc10%2Fbadge.json)
+![coverage](https://img.shields.io/endpoint?url=https%3A%2F%2Fgist.githubusercontent.com%2Felevenadmin%2Fa1557037f77868d0594ea5e610d9c3b7%2Fraw%2Fbadge.json)
 
 
 `whits` is a Node.js library that generates HTML code programmatically with all the advantages of TypeScript, such as 
@@ -38,7 +38,6 @@ const divs = [
 	// Then pass attributes as an object in the first argument, and content as the second argument
 	$('div')({id: 'example', class: ['foo', 'bar']}, 'Hello, world!'),
 	$('div#example')({class: ['foo', 'bar']}, 'Hello, world!'),
-	$('div#example.foo')({class: 'bar'}, 'Hello, world!'),
 
 	// If there are no attributes beyond what is in the selector, pass the content as the first argument
 	$('div#example.foo.bar')('Hello, world!'),
@@ -53,7 +52,7 @@ const divs = [
 // Each tag has an `html` getter that returns a string representation of the tag
 // All of the examples above will have the same HTML output
 console.log(
-	divs.every((example) => example.html === '<div id="example" class="foo bar">Hello, world!</div>')
+	divs.every((example) => example.html === '<div class="foo bar" id="example">Hello, world!</div>')
 );
 // Output: true
 ```
