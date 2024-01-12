@@ -76,25 +76,46 @@ class TemplateFile {
 class CLI {
 
 	/** The input path passed to the CLI */
-	private readonly input: string = process.argv[2]?.replace(/\/$/, '');
+	private input?: string;
 
 	/** The output path passed to the CLI */
-	private readonly output: string = process.argv[3]?.replace(/\/$/, '');
+	private output?: string;
 
 	/** The params object passed to the CLI */
-	public readonly params: any;
+	public readonly params: any = {};
 
 	/**
-	 * Creates a new instance of the `CLI` class.
+	 * Processes the CLI arguments.
+	 * @returns A promise that resolves when the arguments are processed.
 	 */
-	constructor() {
-		if (!this.input || !this.output) this.usage();
-
-		try {
-			this.params = process.argv[4] && JSON.parse(process.argv[4]) || {};
-		} catch (error) {
-			console.error('Failed to parse param string as JSON:', process.argv[4], '\n');
-			this.usage();
+	private async processArgs(): Promise<void> {
+		const args = process.argv.slice(2);
+		while (args.length) {
+			const arg = args.shift() as string;
+			if (arg === '-e') {
+				const extend = args.shift();
+				if (!extend) throw 'Missing path to extend module';
+				try {
+					await import(resolve(extend));
+				} catch (error) {
+					throw `Failed to load extend module: ${extend}`;
+				}
+				continue;
+			}
+			if (!this.input) {
+				this.input = arg.replace(/\/$/, '');
+				continue;
+			}
+			if (!this.output) {
+				this.output = arg.replace(/\/$/, '');
+				continue;
+			}
+			try {
+				const params = JSON.parse(arg) || {};
+				Object.assign(this.params, params);
+			} catch (error) {
+				throw `Failed to parse param string as JSON: ${arg}\n`;
+			}
 		}
 	}
 
@@ -102,7 +123,8 @@ class CLI {
 	 * Prints the usage message and exits the CLI.
 	 */
 	private usage(): void {
-		console.error('Usage: whits <input> <output> [params]');
+		console.error('Usage: whits [-e <extend>] <input> <output> [...params]');
+		console.error('  extend - path to a module that extends whits with new tags');
 		console.error('  input  - path to the input file or directory');
 		console.error('  output - path to the output directory');
 		console.error('  params - JSON-formatted object of params to pass to the templates');
@@ -131,7 +153,7 @@ class CLI {
 	 */
 	private async getTemplates(inputPath: string): Promise<TemplateFile[]> {
 		const inputs = await this.getInputs(inputPath);
-		return (await Promise.all(inputs.map((input) => TemplateFile.load(this.input, input, this.params)))).filter((file) => file.content);
+		return (await Promise.all(inputs.map((input) => TemplateFile.load(this.input as string, input, this.params)))).filter((file) => file.content);
 	}
 
 	/**
@@ -140,9 +162,16 @@ class CLI {
 	 */
 	public async compile(): Promise<void> {
 		try {
-			if (!existsSync(this.input)) throw new Error(`Input file or directory does not exist: ${this.input}`);
-			if (existsSync(this.output) && !(await stat(this.output)).isDirectory()) throw new Error(`Output path is not a directory: ${this.output}`);
-
+			await this.processArgs();
+			if (!this.input) throw 'Missing input path';
+			if (!this.output) throw 'Missing output path';
+			if (!existsSync(this.input)) throw `Input file or directory does not exist: ${this.input}`;
+			if (existsSync(this.output) && !(await stat(this.output)).isDirectory()) throw `Output path is not a directory: ${this.output}`;
+		} catch (error) {
+			console.error(error);
+			return this.usage();
+		}
+		try {
 			const templates = await this.getTemplates(this.input);
 			if (!templates.length) throw new Error('No templates found in input path');
 

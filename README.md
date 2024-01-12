@@ -4,7 +4,6 @@
 [![docs](https://img.shields.io/github/actions/workflow/status/elevensolutions/whits/docs.yml?style=flat&label=docs&logo=github)](https://github.com/elevensolutions/whits/actions/workflows/docs.yml)
 [![coverage](https://img.shields.io/endpoint?url=https%3A%2F%2Fgist.githubusercontent.com%2Felevenadmin%2Fa1557037f77868d0594ea5e610d9c3b7%2Fraw%2Fbadge.json)](https://github.com/elevensolutions/whits/actions/workflows/build.yml)
 
-
 `whits` is a Node.js library that generates HTML code programmatically with all the advantages of TypeScript, such as 
 type-checking, autocompletion, decorators, etc. It provides a clean and concise way to create dynamic HTML templates, 
 with types that provide safeguards against generating invalid HTML.
@@ -180,7 +179,7 @@ Generating static HTML files is also a simple process, which comes down to 4 ste
    // A RootTemplate instance with no params
    export default new RootTemplate([$.div('bar')]);
 
-   // Any other string or instance of Template, RootTemplate, or RawContent is acceptable.
+   // Any other string or instance of Template, RootTemplate, or RawContent is acceptable
    export default 'This string will be escaped.';
    export default raw('<template>This is an HTML <b>template</b> partial.</template>');
    ```
@@ -193,6 +192,85 @@ Generating static HTML files is also a simple process, which comes down to 4 ste
    ```
 See the [static code example](examples/src/static/) for details.
 
+## Using custom tags and attributes
+In keeping with its inherent strictness, `whits` forces you to use valid HTML5 tags and attributes. You may find,
+however, that your project requires using non-standard tags or attributes. A quick workaround would obviously be to 
+wrap raw HTML strings in calls to the `raw()` function. While this works for one-off tags here and there, doing it 
+excessively defeats the purpose of a strongly-typed templating system. This is where `extend()` comes in.
+
+### Extending `whits`
+It's super easy. One small file in your project can give you practically unlimited flexibility. You can call it 
+whatever you want, but we'll use `whits.ts` for this example. Say you want to be able to add these elements:
+```html
+<foo bar='baz' far='faz'>foo</foo>
+<boo id='boo'>boo</boo>
+<div invalid-prop='val'>hello</div>
+```
+
+This is all you need:
+```typescript
+// whits.ts
+
+import {extend} from 'whits';
+
+// Use an ambient module to modify the `whits` types
+declare module 'whits' {
+
+	// Override the tag => attribute mapping
+	interface HtmlAttributeOverrides {
+		foo: 'bar' | 'far';   // Add a `foo` tag with `bar` and `far` attributes
+		boo: undefined;       // Add a `boo` tag with only the global attributes
+		div: 'invalid-attr';  // Add `invalid-attr` as an attribute to div tags
+	}
+}
+
+// Call the extend function, passing only the new tags
+// If you are only adding attributes to existing tags, you can skip this part
+// This call technically doesn't have to be in the same file as the ambient module
+extend('foo', 'boo');
+```
+```typescript
+// a-template.ts
+
+import {$, Template} from 'whits';
+
+// Make sure you import the extension module
+import './whits.js'
+
+// Export your template
+export default new Template([
+	$.foo({bar: 'baz', far: 'faz'}, 'foo'),
+	$('boo#boo')('boo'),
+	$.div({'invalid-attr': 'val'}, 'hello')
+]);
+```
+
+You can also add custom SVG tags and attributes, which works the same way.
+See the [extend code example](examples/src/extend/) for details.
+
+### A note about importing the extension module
+Since we are extending the global instance of `whits` we only really need to import the module once per entrypoint. If 
+it has already been imported somewhere else in the app, `import {$} from 'whits'` will re-import the already modified 
+instance. This means that if you are serving dynamic pages from a `node` app, you can import the module in your app 
+init process and skip importing it into any of your template files.
+
+If, however, you are building a static site, each `*.html.ts` file is essentially its own entrypoint. There are two 
+options for this case:
+1. Import the module in each template where you need to use the custom tags.
+2. Use the `-e` command-line argument to specify a module to import globally:
+   ```bash
+   npx whits -e dist/whits.js dist html
+   ```
+
+## Special thanks
+A quick shout out to a few other folks:
+- [wooorm](https://github.com/wooorm/), for his amazingly useful tag name and attribute lists, 
+  which he has unwittingly provided as the basis for the type definitions in this project
+- The [Pug](https://pugjs.org/) team, for lots of inspiration
+- [GitHub Copilot](https://github.com/features/copilot), for drastically cutting down the 
+  development time for this project
+- You, for your support! ❤️
+
 ## Contributing
 Contributions to `whits` are welcome! To contribute, please fork the repository and submit a pull request.
 
@@ -201,4 +279,3 @@ Contributions to `whits` are welcome! To contribute, please fork the repository 
 
 ## Future enhancements
 - Advanced usage documentation
-- Extending/custom tags capability
