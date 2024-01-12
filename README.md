@@ -1,8 +1,12 @@
 # `whits` - Write HTML in TypeScript
 
-[![build & test](https://img.shields.io/github/actions/workflow/status/elevensolutions/whits/build.yml?style=flat&label=build%20%26%20test&logo=github)](https://github.com/elevensolutions/whits/actions/workflows/build.yml)
-[![docs](https://img.shields.io/github/actions/workflow/status/elevensolutions/whits/docs.yml?style=flat&label=docs&logo=github)](https://github.com/elevensolutions/whits/actions/workflows/docs.yml)
-[![coverage](https://img.shields.io/endpoint?url=https%3A%2F%2Fgist.githubusercontent.com%2Felevenadmin%2Fa1557037f77868d0594ea5e610d9c3b7%2Fraw%2Fbadge.json)](https://github.com/elevensolutions/whits/actions/workflows/build.yml)
+<!-- Badges -->
+[![build & test](https://img.shields.io/github/actions/workflow/status/elevensolutions/whits/build.yml?label=build%20%26%20test&logo=githubactions&logoColor=white&labelColor=333)](https://github.com/elevensolutions/whits/actions/workflows/build.yml)
+[![docs](https://img.shields.io/github/actions/workflow/status/elevensolutions/whits/docs.yml?label=docs&logo=githubactions&logoColor=white&labelColor=333)](https://github.com/elevensolutions/whits/actions/workflows/docs.yml)
+[![coverage](https://img.shields.io/endpoint?url=https%3A%2F%2Fgist.githubusercontent.com%2Felevenadmin%2Fa1557037f77868d0594ea5e610d9c3b7%2Fraw%2Fbadge.json&labelColor=333)](https://github.com/elevensolutions/whits/actions/workflows/build.yml)
+[![github](https://img.shields.io/github/package-json/v/elevensolutions/whits/main?logo=github&labelColor=333&label)](https://github.com/elevensolutions/whits)
+[![npm](https://img.shields.io/npm/v/whits?logo=npm&labelColor=333&label)](https://www.npmjs.com/package/whits)
+[![docs](https://img.shields.io/badge/docs-blue?logo=typescript&labelColor=333)](https://elevensolutions.github.io/whits/)
 
 `whits` is a Node.js library that generates HTML code programmatically with all the advantages of TypeScript, such as 
 type-checking, autocompletion, decorators, etc. It provides a clean and concise way to create dynamic HTML templates, 
