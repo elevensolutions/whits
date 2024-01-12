@@ -5,7 +5,7 @@ const {pct} = JSON.parse(readFileSync('coverage/coverage-summary.json')).total.l
 writeFileSync('coverage/badge.json', JSON.stringify({
 	schemaVersion: 1,
 	label: 'coverage',
-	message: `${Math.round(pct)}%`,
+	message: `${Math.floor(pct)}%`,
 	color: pct < 80 ? 'red' : pct < 90 ? 'yellow' : 'brightgreen',
 	namedLogo: 'jest'
 }));
