@@ -24,7 +24,7 @@ export interface HtmlBaseAttributeMap {
 	'colgroup': 'align' | 'char' | 'charoff' | 'span' | 'valign' | 'width';
 	'data': 'value';
 	'del': 'cite' | 'datetime';
-	'details': 'open';
+	'details': 'name' | 'open';
 	'dialog': 'open';
 	'dir': 'compact';
 	'div': 'align';
@@ -75,6 +75,7 @@ export interface HtmlBaseAttributeMap {
 	'table': 'align' | 'bgcolor' | 'border' | 'cellpadding' | 'cellspacing' | 'frame' | 'rules' | 'summary' | 'width';
 	'tbody': 'align' | 'char' | 'charoff' | 'valign';
 	'td': 'abbr' | 'align' | 'axis' | 'bgcolor' | 'char' | 'charoff' | 'colspan' | 'headers' | 'height' | 'nowrap' | 'rowspan' | 'scope' | 'valign' | 'width';
+	'template': 'shadowrootdelegatesfocus' | 'shadowrootmode';
 	'textarea': 'autocomplete' | 'cols' | 'dirname' | 'disabled' | 'form' | 'maxlength' | 'minlength' | 'name' | 'placeholder' | 'readonly' | 'required' | 'rows' | 'wrap';
 	'tfoot': 'align' | 'char' | 'charoff' | 'valign';
 	'th': 'abbr' | 'align' | 'axis' | 'bgcolor' | 'char' | 'charoff' | 'colspan' | 'headers' | 'height' | 'nowrap' | 'rowspan' | 'scope' | 'valign' | 'width';
@@ -149,7 +150,6 @@ export interface HtmlBaseAttributeMap {
 	'sub': undefined;
 	'summary': undefined;
 	'sup': undefined;
-	'template': undefined;
 	'title': undefined;
 	'tt': undefined;
 	'u': undefined;
