@@ -1,0 +1,19 @@
+{
+	"compileOnSave": false,
+	"compilerOptions": {
+		"esModuleInterop": true,
+		"removeComments": true,
+		"allowSyntheticDefaultImports": true,
+		"downlevelIteration": true,
+		"declaration": true,
+		"sourceMap": true,
+		"target": "ES2020",
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
+		"rootDir": "src",
+		"outDir": "dist"
+	},
+	"include": [
+		"src/**/*"
+	]
+}

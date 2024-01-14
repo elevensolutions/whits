@@ -1,6 +1,7 @@
 node_modules
 dist
-/examples/html
+/examples/*/html
+.whits-dist
 /docs
 /coverage
 .npmrc

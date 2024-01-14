@@ -1,10 +1,12 @@
 {
 	"type": "module",
 	"scripts": {
-		"build": "rm -rf dist html && tsc && npx whits dist/static html/static && npx whits -e dist/extend/whits.js dist/extend html/extend"
+		"build": "npm run build:basic && npm run build:static && npm run build:extend",
+		"build:basic": "cd basic && rm -rf dist && tsc",
+		"build:static": "cd static && rm -rf .whits-dist html && whits src html",
+		"build:extend": "cd extend && rm -rf dist html && whits -e whits . html"
 	},
 	"dependencies": {
-		"@types/node": "^20.9.1",
 		"whits": "../"
 	}
 }

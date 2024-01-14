@@ -11,7 +11,7 @@
 		"module": "NodeNext",
 		"moduleResolution": "NodeNext",
 		"rootDir": "src",
-		"outDir": "dist",
+		"outDir": "dist"
 	},
 	"include": [
 		"src/**/*"
