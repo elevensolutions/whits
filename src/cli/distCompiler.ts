@@ -1,7 +1,6 @@
 import type {CLI} from './cli.js';
 import {readdir, stat} from 'fs/promises';
 import {TemplateFile} from './templateFile.js';
-import {existsSync} from 'fs';
 
 /**
  * Represents a compiler that converts compiled JavaScript template files into HTML files.
@@ -60,10 +59,7 @@ export class DistCompiler {
 	 * @returns A promise that resolves when the templates are compiled.
 	 */
 	public async compile(): Promise<void> {
-		const {output} = this.cli;
 		const input = this.cli.srcCompiler.distPath;
-		if (!existsSync(input)) throw `Input file or directory does not exist: ${input}`;
-		if (existsSync(output) && !(await stat(output)).isDirectory()) throw `Output path is not a directory: ${output}`;
 
 		await this.extend();
 		const templates = await this.getTemplates(input);

@@ -2,6 +2,7 @@ import {Watcher} from './watcher.js';
 import {DistCompiler} from './distCompiler.js';
 import {SrcCompiler} from './srcCompiler.js';
 import {resolve} from 'path';
+import {existsSync, statSync} from 'fs';
 
 /**
  * Represents the command line interface for the `whits` command.
@@ -52,14 +53,27 @@ export class CLI {
 					throw `Failed to parse param string as JSON: ${arg}\n`;
 				}
 			}
-			if (!this.input) throw 'Missing input path';
-			if (!this.output) throw 'Missing output path';
+			this.checkPaths();
 		} catch (error) {
-			console.error(error);
+			console.error(error + '\n');
 			this.usage();
 		}
 		this.srcCompiler = new SrcCompiler(this);
 		this.extendModule = extendPath && resolve(this.srcCompiler.distPath, extendPath.replace(/\.[tj]s$/, '') + '.js');
+	}
+
+	/**
+	 * Checks the input and output paths.
+	 */
+	private checkPaths(): void {
+		for (const dir of ['input', 'output'] as const) {
+			if (!this[dir]) throw `Missing ${dir} path`;
+			if (existsSync(this[dir])) {
+				const stat = statSync(this[dir]);
+				if (!stat.isDirectory()) throw `${dir.replace(/^\w/, (m) => m.toUpperCase())} path is not a directory: ${this[dir]}`;
+			}
+		}
+		if (!existsSync(this.input)) throw `Input directory does not exist: ${this.input}`;
 	}
 
 	/**
@@ -70,7 +84,7 @@ export class CLI {
 		console.error('  -w     - watch for changes');
 		console.error('  -e     - extend whits with a module that adds new tags');
 		console.error('  extend - path to a module that extends whits, relative to the input directory');
-		console.error('  input  - path to the input file or directory');
+		console.error('  input  - path to the input directory');
 		console.error('  output - path to the output directory');
 		console.error('  params - JSON-formatted object of params to pass to the templates');
 		process.exit(1);
