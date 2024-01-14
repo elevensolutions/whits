@@ -201,6 +201,22 @@ describe('Tag creation and manipulation', () => {
 		expect(tag1.html).toBe('<div><h1>Hello, world!</h1><p>Test</p><!-- Comment --><a href="#">Link</a></div>');
 	});
 
+	test('Empty children are discarded properly', () => {
+		const tag1 = new Tag('div', {}, [
+			'test',      // Normal string
+			' ',         // Whitespace string, should still render
+			'',          // Empty string - discard
+			undefined,   // Undefined - discard
+			null, 	     // Null - discard
+			false        // False - discard
+		]);
+
+		expect(tag1.children).toBeInstanceOf(Array);
+		expect(tag1.children.length).toBe(2);
+		expect(tag1.children[0]).toBe('test');
+		expect(tag1.children[1]).toBe(' ');
+	});
+
 	test('Tag outer content is handled properly', () => {
 		const tag1 = new Tag();
 		expect(tag1.outerContent.before).toBeNull();

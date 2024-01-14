@@ -16,7 +16,7 @@ export type ArtificialTag = ArtificialHtmlTag | ArtificialSvgTag;
 /**
  * Represents a child of a tag.
  */
-export type TagChild<T extends HtmlTagName | SvgTagName> = (T extends HtmlTagName ? AnyHtmlTag | Tag<SvgTagName, 'svg'> : AnySvgTag) | RawContent | string;
+export type TagChild<T extends HtmlTagName | SvgTagName> = (T extends HtmlTagName ? AnyHtmlTag | Tag<SvgTagName, 'svg'> : AnySvgTag) | RawContent | string | null | false | undefined;
 
 /**
  * Represents a function that creates a child of a tag.
@@ -100,7 +100,8 @@ export class Tag<S extends SelectorString, T extends SelectorName<S> = SelectorN
 		this.selector = new Selector<S, T>(selectorString);
 		this.isVoid = voids.includes(this.tag as VoidTagName) as any;
 		this.children = (children && !this.isVoid ? (Array.isArray(children) ? children : [children]) : [] as any)
-			.map((child) => typeof child === 'function' ? child() : child);
+			.map((child) => typeof child === 'function' ? child() : child)
+			.filter((child) => child);
 
 		if (this.isVoid) {
 			Object.freeze(this.children);
