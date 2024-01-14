@@ -1,8 +1,8 @@
 {
 	"name": "whits",
-	"version": "1.2.0",
+	"version": "1.2.1",
 	"description": "Write HTML in TypeScript",
-	"tags": [
+	"keywords": [
 		"typescript",
 		"html",
 		"templates"
@@ -22,12 +22,16 @@
 		"access": "public"
 	},
 	"scripts": {
-		"build": "rm -rf dist/* && npx tsc && chmod +x dist/cli.js",
+		"build": "rm -rf dist/* && npx tsc && chmod +x dist/cli/index.js",
 		"pretest": "rm -rf coverage && cd tests && rm -rf dist/* && npx tsc",
 		"test": "NODE_OPTIONS='--experimental-vm-modules --no-warnings' npx jest",
 		"posttest": "node tests/coverage-badge.mjs",
 		"tags": "node generateTags.mjs",
 		"docs": "npx typedoc --cleanOutputDir --out docs src src/tag"
+	},
+	"dependencies": {
+		"@types/node": "^20.11.0",
+		"typescript": "^5.2.2"
 	},
 	"devDependencies": {
 		"@jest/globals": "^29.7.0",
@@ -37,8 +41,7 @@
 		"madge": "^6.1.0",
 		"svg-element-attributes": "^2.1.0",
 		"svg-tag-names": "^3.0.1",
-		"typedoc": "^0.25.3",
-		"typescript": "^5.2.2"
+		"typedoc": "^0.25.7"
 	},
 	"files": [
 		"dist",
@@ -48,5 +51,5 @@
 		".": "./dist/index.js",
 		"./tag": "./dist/tag/index.js"
 	},
-	"bin": "./dist/cli.js"
+	"bin": "./dist/cli/index.js"
 }
