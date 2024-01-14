@@ -49,12 +49,13 @@ export class Watcher {
 	 * @param file The file that changed
 	 */
 	private onChange(type: WatchEventType, file: string): void {
+		const {input, output, srcCompiler} = this.cli;
 		if (this.inProgress) return;
 		if (this.timeout) clearTimeout(this.timeout);
-		if (resolve(this.cli.input, file).startsWith(this.cli.output)) return;
-		if (resolve(this.cli.input, file).startsWith(this.cli.srcCompiler.tscDistPath)) return;
+		if (resolve(input, file).startsWith(output)) return;
+		if (srcCompiler.enabled && resolve(input, file).startsWith(srcCompiler.tscDistPath)) return;
 
-		console.log(`Change detected - ${file}`);
+		console.log(`File ${type} - ${file}`);
 
 		this.timeout = setTimeout(() => {
 			delete this.timeout;
