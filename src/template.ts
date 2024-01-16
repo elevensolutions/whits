@@ -1,9 +1,10 @@
 import type {NonVoidSelectorString, NonVoidTagName} from './tag/selector.js';
-import {AnyHtmlTag, HtmlTagName} from './htmlAttributes.js';
+import type {AnyHtmlTag, HtmlTagName} from './htmlAttributes.js';
 import {RawContent} from './raw.js';
 import {htmlTags} from './tag/htmlTags.js';
 import {Tag, TagChild, TagContent} from './tag/tag.js';
 import {encodeEntities} from './utils.js';
+import {CompoundTag} from './tag/compoundTag.js';
 
 /**
  * Valid types for the content of a template.
@@ -56,7 +57,7 @@ export class Template<T extends TemplateParams = void> {
 	 */
 	private stringifyContent(child?: TagChild<any>): string {
 		if (!child) return '';
-		if (child instanceof Tag) return child.html;
+		if (child instanceof Tag || child instanceof CompoundTag) return child.html;
 		if (child instanceof RawContent) return child.toString();
 		return encodeEntities(child);
 	}

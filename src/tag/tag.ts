@@ -1,6 +1,7 @@
 import type {HtmlTagName, AnyHtmlTag, HtmlAttributes, ArtificialHtmlTag} from '../htmlAttributes.js';
 import type {SvgTagName, AnySvgTag, SvgAttributes, ArtificialSvgTag} from '../svgAttributes.js';
 import type {SelectorName, SelectorString, VoidTagName} from './selector.js';
+import type {CompoundTag} from './compoundTag.js';
 import {Selector} from './selector.js';
 import {RawContent} from '../raw.js';
 import {encodeEntities} from '../utils.js';
@@ -16,7 +17,7 @@ export type ArtificialTag = ArtificialHtmlTag | ArtificialSvgTag;
 /**
  * Represents a child of a tag.
  */
-export type TagChild<T extends HtmlTagName | SvgTagName> = (T extends HtmlTagName ? AnyHtmlTag | Tag<SvgTagName, 'svg'> : AnySvgTag) | RawContent | string | null | false | undefined;
+export type TagChild<T extends HtmlTagName | SvgTagName> = (T extends HtmlTagName ? AnyHtmlTag | Tag<SvgTagName, 'svg'> | CompoundTag<any[], HtmlTagName> : AnySvgTag | CompoundTag<any[], SvgTagName>) | RawContent | string | null | false | undefined;
 
 /**
  * Represents a function that creates a child of a tag.
@@ -48,13 +49,13 @@ export type AttributesArg<T extends HtmlTagName | SvgTagName> = Partial<Attribut
  * Represents an object that can be used to specify children for an HTML element.
  * @template T The HTML tag name.
  */
-export type HtmlChildrenArg<T extends HtmlTagName> = T extends VoidTagName ? undefined : (TagChild<HtmlTagName> | TagChildFactory<HtmlTagName>)[] | TagChildFactory<HtmlTagName> | RawContent | string;
+export type HtmlChildrenArg<T extends HtmlTagName> = T extends VoidTagName ? undefined : (TagChild<HtmlTagName> | TagChildFactory<HtmlTagName>)[] | TagChild<HtmlTagName> | TagChildFactory<HtmlTagName> | RawContent | string;
 
 /**
  * Represents an object that can be used to specify children for an SVG element.
  * @template T The SVG tag name.
  */
-export type SvgChildrenArg = (TagChild<SvgTagName> | TagChildFactory<SvgTagName>)[] | TagChildFactory<SvgTagName> | RawContent | string;
+export type SvgChildrenArg = (TagChild<SvgTagName> | TagChildFactory<SvgTagName>)[] | TagChild<SvgTagName> | TagChildFactory<SvgTagName> | RawContent | string;
 
 /**
  * Represents an object that can be used to specify children for an HTML or SVG element.
@@ -202,7 +203,7 @@ export class Tag<S extends SelectorString, T extends SelectorName<S> = SelectorN
 	 */
 	public get htmlChildren(): string {
 		return this.children.map((child) => {
-			if (child instanceof Tag) return child.html;
+			if (child instanceof Tag || (child as CompoundTag<any>).constructor?.name === 'CompoundTag') return child.html;
 			if (child instanceof RawContent) return child.toString();
 			return encodeEntities(child);
 		}).join('');

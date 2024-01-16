@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals';
 import {$, RawContent, comment, raw} from 'whits';
-import {Tag, TagClass, TagStyle, Selector} from 'whits/tag';
+import {Tag, TagClass, TagStyle, Selector, CompoundTag} from 'whits/tag';
 
 describe('Tag creation and manipulation', () => {
 	const tag = new Tag();
@@ -217,6 +217,20 @@ describe('Tag creation and manipulation', () => {
 		expect(tag1.children[1]).toBe(' ');
 	});
 
+	test('Single child can be passed without array', () => {
+		const tag1 = new Tag('div', {}, $.h1('Hello, world!'));
+		expect(tag1).toBeInstanceOf(Tag);
+		expect(tag1.tag).toBe('div');
+		expect(tag1.children).toBeInstanceOf(Array);
+		expect(tag1.children.length).toBe(1);
+		expect(tag1.children[0]).toBeInstanceOf(Tag);
+		expect((tag1.children[0] as Tag<'h1'>).tag).toBe('h1');
+		expect((tag1.children[0] as Tag<'h1'>).children).toBeInstanceOf(Array);
+		expect((tag1.children[0] as Tag<'h1'>).children.length).toBe(1);
+		expect((tag1.children[0] as Tag<'h1'>).children[0]).toBe('Hello, world!');
+		expect(tag1.html).toBe('<div><h1>Hello, world!</h1></div>');
+	});
+
 	test('Tag outer content is handled properly', () => {
 		const tag1 = new Tag();
 		expect(tag1.outerContent.before).toBeNull();
@@ -421,5 +435,90 @@ describe('Selector creation and manipulation', () => {
 		expect(tag4.selector.id).toBe('tag1');
 		expect(tag4.selector.toString()).toBe('p#tag1.tag1a.tag1b');
 		expect(tag4.html).toBe('<p class="tag1a tag1b" id="tag1"></p>');
+	});
+});
+
+describe('Compound tags', () => {
+	test('Compound tags can be created properly', () => {
+		const cTag = new CompoundTag(['div#foo', 'span.bar', 'a'], {href: '#'}, 'Link');
+		expect(cTag).toBeInstanceOf(CompoundTag);
+		expect(cTag.tags).toBeInstanceOf(Array);
+		expect(cTag.tags.length).toBe(3);
+
+		expect(cTag.tags[0]).toBeInstanceOf(Tag);
+		expect(cTag.tags[0]).toBe(cTag.outerTag);
+		expect(cTag.outerTag).toBeInstanceOf(Tag);
+		expect(cTag.outerTag.tag).toBe('div');
+		expect(cTag.outerTag.selector).toBeInstanceOf(Selector);
+		expect(cTag.outerTag.selector.class).toBeInstanceOf(TagClass);
+		expect(cTag.outerTag.selector.class.size).toBe(0);
+		expect(cTag.outerTag.selector.id).toBe('foo');
+		expect(cTag.outerTag.selector.toString()).toBe('div#foo');
+		expect(cTag.outerTag.class).toBeInstanceOf(TagClass);
+		expect(cTag.outerTag.class.size).toBe(0);
+		expect(cTag.outerTag.attributes.class).toBe('');
+		expect(cTag.outerTag.children).toBeInstanceOf(Array);
+		expect(cTag.outerTag.children.length).toBe(1);
+		expect(cTag.outerTag.children[0]).toBeInstanceOf(Tag);
+		expect(cTag.outerTag.children[0]).toBe(cTag.tags[1]);
+		expect((cTag.outerTag.attributes as any).href).toBeUndefined();
+		
+		expect(cTag.tags[1]).toBeInstanceOf(Tag);
+		expect(cTag.tags[1].tag).toBe('span');
+		expect(cTag.tags[1].selector).toBeInstanceOf(Selector);
+		expect(cTag.tags[1].selector.class).toBeInstanceOf(TagClass);
+		expect(cTag.tags[1].selector.class.size).toBe(1);
+		expect(cTag.tags[1].selector.class.has('bar')).toBe(true);
+		expect(cTag.tags[1].selector.id).toBeUndefined();
+		expect(cTag.tags[1].selector.toString()).toBe('span.bar');
+		expect(cTag.tags[1].class).toBeInstanceOf(TagClass);
+		expect(cTag.tags[1].class.size).toBe(1);
+		expect(cTag.tags[1].class.has('bar')).toBe(true);
+		expect(cTag.tags[1].attributes.class).toBe('bar');
+		expect(cTag.tags[1].children).toBeInstanceOf(Array);
+		expect(cTag.tags[1].children.length).toBe(1);
+		expect(cTag.tags[1].children[0]).toBeInstanceOf(Tag);
+		expect(cTag.tags[1].children[0]).toBe(cTag.tags[2]);
+		expect(cTag.tags[1].children[0]).toBe(cTag.innerTag);
+		expect((cTag.tags[1].attributes as any).href).toBeUndefined();
+		
+		expect(cTag.tags[2]).toBeInstanceOf(Tag);
+		expect(cTag.tags[2]).toBe(cTag.innerTag);
+		expect(cTag.innerTag).toBeInstanceOf(Tag);
+		expect(cTag.innerTag.tag).toBe('a');
+		expect(cTag.innerTag.selector).toBeInstanceOf(Selector);
+		expect(cTag.innerTag.selector.class).toBeInstanceOf(TagClass);
+		expect(cTag.innerTag.selector.class.size).toBe(0);
+		expect(cTag.innerTag.selector.id).toBeUndefined();
+		expect(cTag.innerTag.selector.toString()).toBe('a');
+		expect(cTag.innerTag.class).toBeInstanceOf(TagClass);
+		expect(cTag.innerTag.class.size).toBe(0);
+		expect(cTag.innerTag.attributes.class).toBe('');
+		expect(cTag.innerTag.children).toBeInstanceOf(Array);
+		expect(cTag.innerTag.children.length).toBe(1);
+		expect(cTag.innerTag.children[0]).toBe('Link');
+		expect(cTag.innerTag.attributes.href).toBe('#');
+
+		expect(cTag.html).toBe('<div id="foo"><span class="bar"><a href="#">Link</a></span></div>');
+		expect(cTag.outerTag.html).toBe(cTag.html);
+		expect(cTag.toString()).toBe(cTag.html);
+	});
+
+	test('Compound tags with less than two selectors throw an error', () => {
+		expect(() => new (CompoundTag as any)()).toThrowError('Compound tags must have at least two selectors.');
+		expect(() => new CompoundTag([])).toThrowError('Compound tags must have at least two selectors.');
+		expect(() => new CompoundTag(['div'])).toThrowError('Compound tags must have at least two selectors.');
+		expect(() => new CompoundTag(['div', 'span'])).not.toThrowError();
+	});
+
+	test('Compound tags can be passed as children to other tags', () => {
+		const cTag = new CompoundTag(['div#foo', 'span.bar', 'a'], {href: '#'}, 'Link');
+		const tag = new Tag('div', {}, [cTag]);
+		expect(tag).toBeInstanceOf(Tag);
+		expect(tag.children).toBeInstanceOf(Array);
+		expect(tag.children.length).toBe(1);
+		expect(tag.children[0]).toBeInstanceOf(CompoundTag);
+		expect(tag.children[0]).toBe(cTag);
+		expect(tag.html).toBe('<div><div id="foo"><span class="bar"><a href="#">Link</a></span></div></div>');
 	});
 });

@@ -19,7 +19,8 @@ with types that provide safeguards against generating invalid HTML.
 	- [Basic Usage](#basic-usage)
 		- [Import `$`](#import-)
 		- [Creating tags](#creating-tags)
-		- [Nesting](#nesting)
+		- [Nesting basics](#nesting-basics)
+		- [Nesting shortcut with compound tags](#nesting-shortcut-with-compound-tags)
 		- [Strings and raw content](#strings-and-raw-content)
 		- [Whitespace](#whitespace)
 	- [Creating full HTML templates](#creating-full-html-templates)
@@ -83,7 +84,7 @@ console.log(
 // Output: true
 ```
 
-### Nesting
+### Nesting basics
 One of the essential capabilities is nesting of tags. This works in an intuitive way, just like in HTML.
 
 ```typescript
@@ -104,9 +105,10 @@ $.div([
 	$.p('This is a paragraph.')
 ]);
 
-// A single string or raw content doesn't need to go in an array
+// A single child doesn't need to go in an array
 $.div('Hello, world!');
 $.div(raw('<p>Hello, world!</p>'));
+$.div($.h1('Hello, world!'))
 
 // If a child is an empty or void tag, the factory function itself can be passed without being called
 $.div([
@@ -126,6 +128,33 @@ $.main([
 		])
 	])
 ]);
+```
+
+### Nesting shortcut with compound tags
+You can create compound tags by passing multiple selector strings to the `$` function. A compound can be thought of as 
+a hierarchy of tags nested within each other. This serves as a shortcut when you need to stack tags together. When you 
+create a compound tag, any attributes or children you pass will be redirected into the innermost tag in the hierarchy. 
+Classes and IDs passed as part of the selector will still work as expected.
+
+These 2 examples are equivalent:
+```typescript
+$('header', 'nav#navigation', 'ul.navbar')({title: 'UL'}, [
+	$('li', 'a')({href: '/'}, 'Home'),
+	$('li', 'a')({href: '/page1'}, 'Page 1'),
+]);
+
+$.header(
+	$('nav#navigation')(
+		$('ul.navbar')({title: 'UL'}, [
+			$.li($.a({href: '/'}, 'Home')),
+			$.li($.a({href: '/page1'}, 'Page 1'))
+		])
+	)
+);
+```
+They both output the same HTML:
+```html
+<header><nav id="navigation"><ul class="navbar" title="UL"><li><a href="/">Home</a></li><li><a href="/page1">Page 1</a></li></ul></nav></header>
 ```
 
 ### Strings and raw content

@@ -19,7 +19,7 @@ export * from './svgAttributes.js';
  * or can be used as a namespace to access the factories of all tags.
  */
 export const $
-	: typeof tagFactory & {[K in HtmlTagName]: TagFactory<K>} & {[K in SvgTagName]: TagFactory<K>}
+	: typeof tagFactory & {[K in HtmlTagName]: TagFactory<[K]>} & {[K in SvgTagName]: TagFactory<[K]>}
 	= Object.assign(tagFactory, svgTags, htmlTags);
 
 /**
