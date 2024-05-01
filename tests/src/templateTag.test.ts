@@ -1,5 +1,5 @@
 import {describe, expect, test} from '@jest/globals';
-import {RawContent, comment, css, javascript, raw} from 'whits';
+import {RawContent, comment, css, javascript, raw, _, $} from 'whits';
 import {Tag} from 'whits/tag';
 
 describe('Raw content', () => {
@@ -68,5 +68,80 @@ describe('JavaScript and CSS', () => {
 		expect(tag.children[0]).toBeInstanceOf(RawContent);
 		expect(tag.toString()).toBe('<style>\nbody {\n\tbackground-color: #000;\n}\n</style>');
 		expect(tag.html).toBe('<style>\nbody {\n\tbackground-color: #000;\n}\n</style>');
+	});
+});
+
+describe('Tag children interpolation', () => {
+	test('Tag children are created properly via template literal', () => {
+		const children = _`Hello, ${'world'} / ${$.span('foo')} / ${$.i({title: 'faz'}, 'bar')} ${$.br} baz!`;
+		const tag = $.div(children);
+		expect(children).toBeInstanceOf(Array);
+		expect(children.length).toBe(9);
+		expect(children[0]).toBe('Hello, ');
+		expect(children[1]).toBe('world');
+		expect(children[2]).toBe(' / ');
+		expect(children[3]).toBeInstanceOf(Tag);
+		expect((children[3] as Tag<'span'>).tag).toBe('span');
+		expect((children[3] as Tag<'span'>).children).toEqual(['foo']);
+		expect(children[4]).toBe(' / ');
+		expect(children[5]).toBeInstanceOf(Tag);
+		expect((children[5] as Tag<'i'>).tag).toBe('i');
+		expect((children[5] as Tag<'i'>).attributes.title).toBe('faz');
+		expect((children[5] as Tag<'i'>).children).toEqual(['bar']);
+		expect(children[6]).toBe(' ');
+		expect(typeof children[7]).toBe('function');
+		expect(children[8]).toBe(' baz!');
+		expect(tag).toBeInstanceOf(Tag);
+		expect(tag.children).toBeInstanceOf(Array);
+		expect(tag.toString()).toBe('<div>Hello, world / <span>foo</span> / <i title="faz">bar</i> <br> baz!</div>');
+	});
+
+	test('Interpolation template tag works without any expressions', () => {
+		const children = _`Hello, world!`;
+		const tag = $.div(children);
+		expect(children).toBeInstanceOf(Array);
+		expect(children.length).toBe(1);
+		expect(children[0]).toBe('Hello, world!');
+		expect(tag).toBeInstanceOf(Tag);
+		expect(tag.children).toBeInstanceOf(Array);
+		expect(tag.toString()).toBe('<div>Hello, world!</div>');
+	});
+
+	test('Interpolation template tag works without any content', () => {
+		const children = _``;
+		const tag = $.div(children);
+		expect(children).toBeInstanceOf(Array);
+		expect(children.length).toBe(0);
+		expect(tag).toBeInstanceOf(Tag);
+		expect(tag.children).toBeInstanceOf(Array);
+		expect(tag.toString()).toBe('<div></div>');
+	});
+
+	test('Interpolation template tag works when it starts with an expression', () => {
+		const children = _`${$.div('foo')} bar`;
+		const tag = $.div(children);
+		expect(children).toBeInstanceOf(Array);
+		expect(children.length).toBe(2);
+		expect(children[0]).toBeInstanceOf(Tag);
+		expect((children[0] as Tag<'div'>).tag).toBe('div');
+		expect((children[0] as Tag<'div'>).children).toEqual(['foo']);
+		expect(children[1]).toBe(' bar');
+		expect(tag).toBeInstanceOf(Tag);
+		expect(tag.children).toBeInstanceOf(Array);
+		expect(tag.toString()).toBe('<div><div>foo</div> bar</div>');
+	});
+
+	test('Interpolation template tag works when it ends with an expression', () => {
+		const children = _`foo ${$.div('bar')}`;
+		const tag = $.div(children);
+		expect(children).toBeInstanceOf(Array);
+		expect(children.length).toBe(2);
+		expect(children[0]).toBe('foo ');
+		expect(children[1]).toBeInstanceOf(Tag);
+		expect((children[1] as Tag<'div'>).tag).toBe('div');
+		expect((children[1] as Tag<'div'>).children).toEqual(['bar']);
+		expect(tag).toBeInstanceOf(Tag);
+		expect(tag.children).toBeInstanceOf(Array);
+		expect(tag.toString()).toBe('<div>foo <div>bar</div></div>');
 	});
 });

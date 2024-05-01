@@ -1,5 +1,7 @@
+import {HtmlTagName} from './htmlAttributes.js';
 import {RawContent} from './raw.js';
-import {Tag} from './tag/tag.js';
+import {SvgTagName} from './svgAttributes.js';
+import {Tag, TagChild, TagChildFactory} from './tag/tag.js';
 
 /**
  * A template tag that marks the given string as raw content by wrapping it in a `RawContent` instance.
@@ -69,4 +71,22 @@ export function javascript(content: TemplateStringsArray, ...values: string[]): 
  */
 export function css(content: TemplateStringsArray, ...values: string[]): Tag<'style'> {
 	return new Tag('style', {}, raw(content, ...values));
+}
+
+/**
+ * A template tag that interpolates the given content and values.
+ * This is used to create a new array of content that can be inserted into a `Tag` instance.
+ * @param content The template string, allowing for included expression values to be any valid `Tag` children.
+ * @returns The interpolated content as an array of valid `Tag` children.
+ * @example
+ * _`Hello, ${$.div('world')}!` === ['Hello, ', $.div('world'), '!']; // true
+ * // HTML output: Hello, <div>world</div>!
+ */
+export function _<T extends (TagChild<HtmlTagName | SvgTagName> | TagChildFactory<HtmlTagName | SvgTagName> | string)[]>(content: TemplateStringsArray, ...values: T): (T[number] | string)[] {
+	const output: (T[number] | string)[] = [];
+	for (const [index, item] of content.entries()) {
+		if (item) output.push(item);
+		if (index < values.length) output.push(values[index]);
+	}
+	return output;
 }

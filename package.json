@@ -1,6 +1,6 @@
 {
 	"name": "whits",
-	"version": "1.3.2",
+	"version": "1.3.3",
 	"description": "Write HTML in TypeScript",
 	"keywords": [
 		"typescript",

@@ -21,6 +21,7 @@ with types that provide safeguards against generating invalid HTML.
 		- [Creating tags](#creating-tags)
 		- [Nesting basics](#nesting-basics)
 		- [Nesting shortcut with compound tags](#nesting-shortcut-with-compound-tags)
+		- [Interpolation `1.3.3+`](#interpolation-133)
 		- [Strings and raw content](#strings-and-raw-content)
 		- [Whitespace](#whitespace)
 	- [Creating full HTML templates](#creating-full-html-templates)
@@ -131,7 +132,7 @@ $.main([
 ```
 
 ### Nesting shortcut with compound tags
-You can create compound tags by passing multiple selector strings to the `$` function. A compound can be thought of as 
+You can create compound tags by passing multiple selector strings to the `$` function. A compound tag can be thought of as 
 a hierarchy of tags nested within each other. This serves as a shortcut when you need to stack tags together. When you 
 create a compound tag, any attributes or children you pass will be redirected into the innermost tag in the hierarchy. 
 Classes and IDs passed as part of the selector will still work as expected.
@@ -155,6 +156,33 @@ $.header(
 They both output the same HTML:
 ```html
 <header><nav id="navigation"><ul class="navbar" title="UL"><li><a href="/">Home</a></li><li><a href="/page1">Page 1</a></li></ul></nav></header>
+```
+
+### Interpolation `1.3.3+`
+Sometimes it is inconvenient or difficult to read an array of tag children, such as when there are `Tag` instances and 
+other content placed within a paragraph of text. This is where the interpolation `_` template literal function comes in 
+handy. Using this function, you can pass any valid `Tag` children as expressions in a template literal.
+
+These 2 examples are equivalent:
+```typescript
+import {$, _} from 'whits';
+
+const externalString = 'external string';
+
+$.div([
+	'This could be a long chunk of text, with ', $.i('several'), ' ', $.span('tags'),
+	' and other content embedded, including this ', externalString, '.'
+]);
+
+$.div(_`
+	This could be a long chunk of text, with ${$.i('several')} ${$.span('tags')} 
+	and other content embedded, including this ${externalString}.
+`);
+```
+
+They both output the same HTML:
+```html
+<div>This could be a long chunk of text, with <i>several</i> <span>tags</span> and other content embedded, including this external string.</div>
 ```
 
 ### Strings and raw content

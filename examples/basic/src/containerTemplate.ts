@@ -1,4 +1,8 @@
-import {$, comment, javascript, loop, raw, Template} from 'whits';
+import {$, _, comment, javascript, loop, raw, Template} from 'whits';
+
+// These will be used later in this template.
+const includedLink = $.a({href: '#'}, 'included link');
+const includedText = 'included text';
 
 // Export a dynamic template that implements a callback function, which accepts a params object.
 // The params object is typed based on the template's generic type parameter.
@@ -26,6 +30,15 @@ export default new Template<{liItems: number, heading: string, divItems: string[
 			// The number of items here is specified by the `liItems` property.
 			loop(params.liItems, (i) => $.li('Item ' + i))
 		),
+
+		// The next child is a `p` tag with a large amount of text, using the interpolation function to embed children.
+		// The interpolation function is the `_` function, which is a template tag that creates an array of children.
+		// This is a much more readable way to write this type of content than passing all the children as an array.
+		$.p(_`
+			Lorem ipsum dolor sit amet, consectetur adipiscing elit. Here is a ${$.a({href: '#'}, 'link')}. 
+			All of this plain text is <escaped> unless a ${raw`<b>raw</b>`} instance is inserted. This is also 
+			a good way to insert an ${includedLink} or ${includedText}.
+		`),
 
 		// Use the following functions with caution, as they can be used to create invalid or insecure HTML.
 
