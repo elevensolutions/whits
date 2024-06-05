@@ -69,6 +69,9 @@ export type ChildrenArg<T extends HtmlTagName | SvgTagName> = T extends HtmlTagN
  * @template T The tag name.
  */
 export class Tag<S extends SelectorString, T extends SelectorName<S> = SelectorName<S>> {
+	/** The list of tags that are immune from whitespace truncation */
+	public static readonly keepWhitespace: Set<HtmlTagName | SvgTagName> = new Set(['pre', 'textarea']);
+
 	/** The selector of the tag. */
 	public readonly selector: Selector<S, T>;
 	
@@ -139,7 +142,7 @@ export class Tag<S extends SelectorString, T extends SelectorName<S> = SelectorN
 		const value = this.outerContent[section];
 		if (!value) return '';
 		if (value instanceof RawContent) return value.content;
-		return encodeEntities(value);
+		return encodeEntities(value, true);
 	}
 
 	/**
@@ -205,7 +208,7 @@ export class Tag<S extends SelectorString, T extends SelectorName<S> = SelectorN
 		return this.children.map((child) => {
 			if (child instanceof Tag || (child as CompoundTag<any>).constructor?.name === 'CompoundTag') return child.html;
 			if (child instanceof RawContent) return child.toString();
-			return encodeEntities(child);
+			return encodeEntities(child, !Tag.keepWhitespace.has(this.tag));
 		}).join('');
 	}
 

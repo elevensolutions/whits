@@ -96,6 +96,18 @@ describe('Tag children interpolation', () => {
 		expect(tag.toString()).toBe('<div>Hello, world / <span>foo</span> / <i title="faz">bar</i> <br> baz!</div>');
 	});
 
+	test('Interpolation template tag properly condenses whitespace', () => {
+		const tag = $.div(_`
+			Line 1
+			Line  <a> 2  </a>  
+			 Line   3
+			${$.a('Link')}  within a ${$.b(' li')}ne
+		`);
+		expect(tag).toBeInstanceOf(Tag);
+		expect(tag.children).toBeInstanceOf(Array);
+		expect(tag.toString()).toBe('<div> Line 1 Line &lt;a&gt; 2 &lt;/a&gt; Line 3 <a>Link</a> within a <b> li</b>ne </div>');
+	});
+
 	test('Interpolation template tag works without any expressions', () => {
 		const children = _`Hello, world!`;
 		const tag = $.div(children);

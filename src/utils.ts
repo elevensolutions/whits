@@ -3,9 +3,11 @@ import type {TagChild} from './tag/tag.js';
 /**
  * Encodes special characters in a string to their corresponding HTML entities.
  * @param input The string to encode.
+ * @param truncateWhitespace Whether to truncate whitespace.
  * @returns The encoded string.
  */
-export function encodeEntities(input: string): string {
+export function encodeEntities(input: string, truncateWhitespace: boolean = false): string {
+	if (truncateWhitespace) input = input.replace(/\s+/g, ' ');
 	return input.
 		replace(/&/g, '&amp;').
 		replace(/"/g, '&quot;').
@@ -16,6 +18,7 @@ export function encodeEntities(input: string): string {
 			return '&#' + (((value.charCodeAt(0) - 0xD800) * 0x400) + (value.charCodeAt(1) - 0xDC00) + 0x10000) + ';';
 		}).
 		replace(/([^\#-~ |!])/g, (value: string) => {
+			if (['\n', '\t'].includes(value)) return value;
 			return '&#' + value.charCodeAt(0) + ';';
 		}).
 		replace(/</g, '&lt;').

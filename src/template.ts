@@ -59,7 +59,7 @@ export class Template<T extends TemplateParams = void> {
 		if (!child) return '';
 		if (child instanceof Tag || child instanceof CompoundTag) return child.html;
 		if (child instanceof RawContent) return child.toString();
-		return encodeEntities(child);
+		return encodeEntities(child, true);
 	}
 }
 

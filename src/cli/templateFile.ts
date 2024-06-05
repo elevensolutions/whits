@@ -31,7 +31,7 @@ export class TemplateFile {
 	 * @returns The resolved template string.
 	 */
 	private resolveTemplate(template: any): string {
-		if (typeof template === 'string') return encodeEntities(template);
+		if (typeof template === 'string') return encodeEntities(template, true);
 		if (template instanceof RawContent) return template.toString();
 		if (template instanceof Template) return template.renderString(this.cli.params);
 		throw new Error('Module must have a default export of type string, RawContent, Template, or RootTemplate');

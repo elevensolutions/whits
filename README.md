@@ -258,15 +258,38 @@ $.head([
 ```
 
 ### Whitespace
-Whitespace in strings is not automatically truncated. However, there is no space rendered between HTML tags.
-Therefore, if you want space in your output, you should add it manually via strings.
+Whitespace within regular strings and template literals is truncated to a single space character, and there is no space 
+rendered between HTML tags. Therefore, if you want space in your output, you must add it manually via `RawContent` 
+instances or `raw()` calls.
+
+By default, the `pre` and `textarea` tags are immune from this whitespace truncation. The list of immune tags can be 
+changed globally by adding/removing items from the `Tag.keepWhitespace` static property, which is a `Map` instance 
+whose items are strings representing HTML & SVG tag names.
+
+Whitespace truncation does not apply to `RawContent`. It *does* apply to the 
+[interpolation `_` template literal function](#interpolation-133), but not any of the other 
+[template literal functions](#strings-and-raw-content).
+
+> &#9888; This behavior has changed as of version `1.4.0`. Previous versions did not truncate whitespace.
+
 ```typescript
+import {$, raw} from 'whits';
+
 // Add a full empty line between tags
 $.div([
 	$.h1('Hello, world!'),
-	'\n\n',
+	raw('\n\n'),
 	$.p('This is a paragraph.')
 ]);
+
+// Add `a` to the list of tags that are immune from whitespace truncation
+Tag.keepWhitespace.add('a');
+
+// Now this will render the whitespace within the `a` tag
+$.a(`
+	Line 1
+	Line 2
+`);
 ```
 
 ## Creating full HTML templates

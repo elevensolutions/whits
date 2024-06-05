@@ -201,6 +201,29 @@ describe('Tag creation and manipulation', () => {
 		expect(tag1.html).toBe('<div><h1>Hello, world!</h1><p>Test</p><!-- Comment --><a href="#">Link</a></div>');
 	});
 
+	test('Whitespace is strings is properly truncated', () => {
+		const tag1 = new Tag('div', {}, [
+			'<p>Test</p>',
+			`
+				line   1
+				line  2
+				line <a> 3 </a>
+			`
+		]);
+		const tag2 = new Tag('pre', {}, [
+			`
+				line   1 
+				line  2
+			`
+		]);
+		expect(tag1.children).toBeInstanceOf(Array);
+		expect(tag1.children.length).toBe(2);
+		expect(tag1.html).toBe('<div>&lt;p&gt;Test&lt;/p&gt; line 1 line 2 line &lt;a&gt; 3 &lt;/a&gt; </div>');
+		expect(tag2.children).toBeInstanceOf(Array);
+		expect(tag2.children.length).toBe(1);
+		expect(tag2.html).toBe('<pre>\n\t\t\t\tline   1 \n\t\t\t\tline  2\n\t\t\t</pre>');
+	});
+
 	test('Empty children are discarded properly', () => {
 		const tag1 = new Tag('div', {}, [
 			'test',      // Normal string
