@@ -11,7 +11,7 @@ export class Watcher {
 	private readonly delay = 250;
 
 	/** The FSWatcher instance. */
-	private readonly watcher: FSWatcher = watch(this.cli.input, {recursive: true}, this.onChange.bind(this));
+	private readonly watcher: FSWatcher = watch(this.cli.srcCompiler.input, {recursive: true}, this.onChange.bind(this));
 
 	/** The working directory. */
 	private readonly cwd: string = process.cwd();
@@ -32,14 +32,13 @@ export class Watcher {
 
 	/**
 	 * Creates a Watcher instance.
-	 * @param input The input path to watch
 	 * @param args The arguments passed to the CLI
 	 */
 	constructor(private readonly cli: CLI) {
 		this.args = this.cli.args.filter((arg) => arg !== '-w');
 		process.on('exit', () => this.stop());
 		this.compile().then(() => {
-			console.log(`\nWatching for changes in ${this.cli.input}`);
+			console.log(`\nWatching for changes in ${this.cli.srcCompiler.input}`);
 		});
 	}
 

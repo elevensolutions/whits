@@ -14,6 +14,9 @@ export class SrcCompiler {
 	/** The path to the compiled TypeScript files. */
 	public readonly tscDistPath: string;
 
+	/** The path to the files for the SrcCompiler to consume. */
+	public readonly input: string;
+
 	/** The path to the files for the DistCompiler to consume. */
 	public readonly distPath: string;
 
@@ -32,8 +35,9 @@ export class SrcCompiler {
 
 		this.enabled = hasConfig || hasTsFiles;
 		this.tscDistPath = outDir ? resolve(this.cli.input, outDir) : resolve('.whits-dist');
+		this.input = config?.compilerOptions?.rootDir || this.cli.input;
 		this.distPath = this.enabled ? this.tscDistPath : this.cli.input;
-		this.tscArgs = outDir ? ['-b'] : ['--outDir', `'${this.tscDistPath}'`, '-m', 'nodenext', '-t', 'es2020', '*.ts'];
+		this.tscArgs = hasConfig ? ['-b'] : ['--outDir', `'${this.tscDistPath}'`, '-m', 'nodenext', '-t', 'es2020', '*.ts'];
 	}
 	
 	/**
