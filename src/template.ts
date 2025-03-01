@@ -28,7 +28,7 @@ export class Template<T extends TemplateParams = void> {
 	 * @param content The content of the template, or a function that returns the content.
 	 */
 	constructor(
-		public readonly content: TemplateContent | ((params: T) => TemplateContent)
+		public readonly content: TemplateContent | ((params: T) => TemplateContent | Promise<TemplateContent>)
 	) {}
 
 	/**
@@ -36,8 +36,8 @@ export class Template<T extends TemplateParams = void> {
 	 * @param params The params to pass to the template.
 	 * @returns The rendered template.
 	 */
-	public renderString(params: T): string {
-		const content = typeof this.content === 'function' ? this.content(params) : this.content;
+	public async renderString(params: T): Promise<string> {
+		const content = typeof this.content === 'function' ? await this.content(params) : this.content;
 		return Array.isArray(content) ? content.map((child) => this.stringifyContent(child)).join('') : this.stringifyContent(content) || '';
 	}
 
@@ -46,8 +46,8 @@ export class Template<T extends TemplateParams = void> {
 	 * @param params The params to pass to the template.
 	 * @returns The rendered template as a `RawContent` instance.
 	 */
-	public render(params: T): RawContent {
-		return new RawContent(this.renderString(params));
+	public async render(params: T): Promise<RawContent> {
+		return new RawContent(await this.renderString(params));
 	}
 
 	/**
@@ -76,9 +76,9 @@ export class RootTemplate<T extends TemplateParams = void> extends Template<T> {
 	 * @param rootTag The root tag to use for the template. Defaults to `html`.
 	 */
 	constructor(
-		content: TemplateContent | ((params: T) => TemplateContent),
+		content: TemplateContent | ((params: T) => TemplateContent | Promise<TemplateContent>),
 		public doctype: string | null = '<!DOCTYPE html>',
-		public rootTag: NonVoidTagName | ((params: T, content: RawContent) => Tag<NonVoidSelectorString>) = 'html'
+		public rootTag: NonVoidTagName | ((params: T, content: RawContent) => Tag<NonVoidSelectorString> | Promise<Tag<NonVoidSelectorString>>) = 'html'
 	) {
 		super(content);
 	}
@@ -88,10 +88,10 @@ export class RootTemplate<T extends TemplateParams = void> extends Template<T> {
 	 * @param params The params to pass to the template.
 	 * @returns The rendered template.
 	 */
-	public renderString(params: T): string {
+	public async renderString(params: T): Promise<string> {
 		const doctype = this.doctype ? `${this.doctype}\n` : '';
-		const content = new RawContent(super.renderString(params));
-		const rootTag = typeof this.rootTag === 'function' ? this.rootTag(params, content) : htmlTags[this.rootTag](content);
+		const content = new RawContent(await super.renderString(params));
+		const rootTag = typeof this.rootTag === 'function' ? await this.rootTag(params, content) : htmlTags[this.rootTag](content);
 		return doctype + rootTag.toString();
 	}
 }

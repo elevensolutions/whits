@@ -30,7 +30,7 @@ export class TemplateFile {
 	 * @param template The template to resolve.
 	 * @returns The resolved template string.
 	 */
-	private resolveTemplate(template: any): string {
+	private async resolveTemplate(template: any): Promise<string> {
 		if (typeof template === 'string') return encodeEntities(template, true);
 		if (template instanceof RawContent) return template.toString();
 		if (template instanceof Template) return template.renderString(this.cli.params);
@@ -56,7 +56,7 @@ export class TemplateFile {
 		}
 
 		try {
-			const content = this.resolveTemplate(templateModule.default);
+			const content = await this.resolveTemplate(templateModule.default);
 			if (!existsSync(outputDir)) await mkdir(outputDir, {recursive: true});
 			await writeFile(this.outputPath, content);
 			console.log(this.outputPath);
