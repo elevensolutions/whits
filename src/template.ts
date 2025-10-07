@@ -1,8 +1,7 @@
-import type {NonVoidSelectorString, NonVoidTagName} from './tag/selector.js';
+import type {NonVoidSelectorString, SelectorName} from './tag/selector.js';
 import type {AnyHtmlTag, HtmlTagName} from './htmlAttributes.js';
 import {RawContent} from './raw.js';
-import {htmlTags} from './tag/htmlTags.js';
-import {Tag, TagChild, TagContent} from './tag/tag.js';
+import {Attributes, Tag, TagChild, TagContent} from './tag/tag.js';
 import {encodeEntities} from './utils.js';
 import {CompoundTag} from './tag/compoundTag.js';
 
@@ -67,18 +66,21 @@ export class Template<T extends TemplateParams = void> {
  * A template that can be used to render the root HTML content.
  * Automatically adds a doctype and root tag to the rendered content.
  * @template T The type of the template's params.
+ * @template R The root tag selector string. Must be a non-void HTML tag.
  */
-export class RootTemplate<T extends TemplateParams = void> extends Template<T> {
+export class RootTemplate<T extends TemplateParams = void, R extends NonVoidSelectorString = 'html'> extends Template<T> {
 	/**
 	 * Creates a new root template.
 	 * @param content The content of the template, or a function that returns the content.
-	 * @param doctype The doctype tag to use for the template. Defaults to `<!DOCTYPE html>`. Set to `null` to disable.
+	 * @param doctype The doctype tag to use for the template. Defaults to `<!doctype html>`. Set to `null` to disable.
 	 * @param rootTag The root tag to use for the template. Defaults to `html`.
+	 * @param rootAttributes The attributes to set on the root tag. Defaults to `{lang: 'en'}` if the root tag is `html`.
 	 */
 	constructor(
 		content: TemplateContent | ((params: T) => TemplateContent | Promise<TemplateContent>),
-		public doctype: string | null = '<!DOCTYPE html>',
-		public rootTag: NonVoidTagName | ((params: T, content: RawContent) => Tag<NonVoidSelectorString> | Promise<Tag<NonVoidSelectorString>>) = 'html'
+		public doctype: string | null = '<!doctype html>',
+		public rootTag: R | ((params: T, content: RawContent) => Tag<R> | Promise<Tag<R>>) = 'html' as R,
+		public rootAttributes: Partial<Attributes<SelectorName<R>>> = (rootTag === 'html' ? {lang: 'en'} : {}) as Partial<Attributes<SelectorName<R>>>
 	) {
 		super(content);
 	}
@@ -91,7 +93,7 @@ export class RootTemplate<T extends TemplateParams = void> extends Template<T> {
 	public async renderString(params: T): Promise<string> {
 		const doctype = this.doctype ? `${this.doctype}\n` : '';
 		const content = new RawContent(await super.renderString(params));
-		const rootTag = typeof this.rootTag === 'function' ? await this.rootTag(params, content) : htmlTags[this.rootTag](content);
+		const rootTag = typeof this.rootTag === 'function' ? await this.rootTag(params, content) : new Tag<NonVoidSelectorString>(this.rootTag, this.rootAttributes, content);
 		return doctype + rootTag.toString();
 	}
 }
