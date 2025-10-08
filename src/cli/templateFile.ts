@@ -31,6 +31,7 @@ export class TemplateFile {
 	 * @returns The resolved template string.
 	 */
 	private async resolveTemplate(template: any): Promise<string> {
+		template = await template;
 		if (typeof template === 'string') return encodeEntities(template, true);
 		if (template instanceof RawContent) return template.toString();
 		if (template instanceof Template) return template.renderString(this.cli.params);
