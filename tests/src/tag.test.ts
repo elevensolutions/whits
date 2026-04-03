@@ -528,10 +528,10 @@ describe('Compound tags', () => {
 	});
 
 	test('Compound tags with less than two selectors throw an error', () => {
-		expect(() => new (CompoundTag as any)()).toThrowError('Compound tags must have at least two selectors.');
-		expect(() => new CompoundTag([])).toThrowError('Compound tags must have at least two selectors.');
-		expect(() => new CompoundTag(['div'])).toThrowError('Compound tags must have at least two selectors.');
-		expect(() => new CompoundTag(['div', 'span'])).not.toThrowError();
+		expect(() => new (CompoundTag as any)()).toThrow('Compound tags must have at least two selectors.');
+		expect(() => new CompoundTag([])).toThrow('Compound tags must have at least two selectors.');
+		expect(() => new CompoundTag(['div'])).toThrow('Compound tags must have at least two selectors.');
+		expect(() => new CompoundTag(['div', 'span'])).not.toThrow();
 	});
 
 	test('Compound tags can be passed as children to other tags', () => {

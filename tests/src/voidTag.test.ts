@@ -15,10 +15,10 @@ describe('Void tag creation and manipulation', () => {
 
 	test('Void tag cannot have children', () => {
 		expect(() => {
-			new Tag('img', {}, 'child' as undefined) as never;
-		}).toThrowError(/Void tag img cannot have children/);
+			new Tag('img', {}, 'child' as any);
+		}).toThrow(/Void tag img cannot have children/);
 		expect(() => {
 			tag.children.push(new Tag('span') as never);
-		}).toThrowError(/object is not extensible/);
+		}).toThrow(/object is not extensible/);
 	});
 });

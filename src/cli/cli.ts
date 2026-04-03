@@ -97,14 +97,14 @@ export class CLI {
 	public async compile(): Promise<void> {
 		try {
 			await this.srcCompiler.compile();
-		} catch (error) {
+		} catch (error: any) {
 			console.error('TSC failed, cannot continue.');
 			process.exit(error);
 		}
 		try {
 			const distCompiler = new DistCompiler(this);
 			await distCompiler.compile();
-		} catch (error) {
+		} catch (error: any) {
 			if (error) console.error(error.message || error);
 			process.exit(1);
 		}

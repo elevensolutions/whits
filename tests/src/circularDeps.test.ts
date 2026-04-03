@@ -1,7 +1,6 @@
 import {describe, expect, test} from '@jest/globals';
 import type {MatcherFunction} from 'expect';
-import madge, {MadgeInstance} from 'madge';
-import {resolve} from 'path';
+import skott, {SkottInstance} from 'skott';
 
 declare module 'expect' {
 	interface Matchers<R> {
@@ -9,9 +8,9 @@ declare module 'expect' {
 	}
 }
 
-const toHaveNoCircularDeps: MatcherFunction = function(received: MadgeInstance) {
-	if (!('circular' in received)) throw new Error('Not a Madge instance');
-	const deps = received.circular();
+const toHaveNoCircularDeps: MatcherFunction = function(received: SkottInstance) {
+	if (!('useGraph' in received)) throw new Error('Not a Skott instance');
+	const deps = received.useGraph().findCircularDependencies();
 	const {printExpected, printReceived, RECEIVED_COLOR} = this.utils;
 	return {
 		message: () => [
@@ -27,7 +26,7 @@ expect.extend({toHaveNoCircularDeps});
 
 describe('Circular Dependencies', () => {
 	test('Free of circular dependencies', async () => {
-		const result = await madge(resolve('dist'));
+		const result = await skott({cwd: 'src', dependencyTracking: {thirdParty: false, builtin: false, typeOnly: false}});
 		expect(result).toHaveNoCircularDeps();
 	});
 });

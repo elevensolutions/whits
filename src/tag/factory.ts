@@ -37,9 +37,9 @@ export function tagFactory<S extends SelectorString[], T extends SelectorName<S[
 		const hasAttributes = !(typeof arg2 === 'string' || typeof arg2 === 'function' || arg2 instanceof RawContent || arg2 instanceof Tag || arg2 instanceof CompoundTag || Array.isArray(arg2));
 
 		if (selectorString.length > 1) {
-			return hasAttributes ? new CompoundTag(selectorString, arg2 as AttributesArg<T>, content) : new CompoundTag(selectorString, {}, arg2 as ChildrenArg<T>) as any;
+			return hasAttributes ? new CompoundTag(selectorString, arg2 as AttributesArg<T>, content) as FactoryOutput<S, T> : new CompoundTag(selectorString, {}, arg2 as ChildrenArg<T>) as any;
 		} else {
-			return hasAttributes ? new Tag(selectorString[0], arg2 as AttributesArg<T>, content) : new Tag(selectorString[0], {}, arg2 as ChildrenArg<T>) as any;
+			return hasAttributes ? new Tag(selectorString[0], arg2 as AttributesArg<T>, content) as FactoryOutput<S, T> : new Tag(selectorString[0], {}, arg2 as ChildrenArg<T>) as any;
 		}
 	}
 }

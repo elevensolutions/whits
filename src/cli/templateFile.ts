@@ -62,8 +62,8 @@ export class TemplateFile {
 			await writeFile(this.outputPath, content);
 			console.log(this.outputPath);
 			return content;
-		} catch (error) {
-			console.error(error.message);
+		} catch (error: any) {
+			console.error(error?.message || error);
 			process.exit(1);
 		}
 	}

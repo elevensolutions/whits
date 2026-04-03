@@ -104,8 +104,8 @@ export class Tag<S extends SelectorString, T extends SelectorName<S> = SelectorN
 		this.selector = new Selector<S, T>(selectorString);
 		this.isVoid = voids.includes(this.tag as VoidTagName) as any;
 		this.children = (children && !this.isVoid ? (Array.isArray(children) ? children : [children]) : [] as any)
-			.map((child) => typeof child === 'function' ? child() : child)
-			.filter((child) => child);
+			.map((child: any) => typeof child === 'function' ? child() : child)
+			.filter((child: any) => child);
 
 		if (this.isVoid) {
 			Object.freeze(this.children);
@@ -157,7 +157,7 @@ export class Tag<S extends SelectorString, T extends SelectorName<S> = SelectorN
 			this.selector.toString(), attributes,
 			this.children.map((child) => {
 				if (child instanceof Tag || child instanceof RawContent) return child.clone(true);
-				return child.toString();
+				return child?.toString();
 			}) as ChildrenArg<T>
 		);
 	}
@@ -206,9 +206,9 @@ export class Tag<S extends SelectorString, T extends SelectorName<S> = SelectorN
 	 */
 	public get htmlChildren(): string {
 		return this.children.map((child) => {
-			if (child instanceof Tag || (child as CompoundTag<any>).constructor?.name === 'CompoundTag') return child.html;
+			if (child instanceof Tag || (child as CompoundTag<any>).constructor?.name === 'CompoundTag') return (child as Tag<any>).html;
 			if (child instanceof RawContent) return child.toString();
-			return encodeEntities(child, !Tag.keepWhitespace.has(this.tag));
+			return encodeEntities(child as string, !Tag.keepWhitespace.has(this.tag));
 		}).join('');
 	}
 
