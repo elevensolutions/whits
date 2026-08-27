@@ -6,10 +6,10 @@ import block2 from './components/block2.js';
 export default htmlTemplate.render({
 	title: 'Static Example',
 	pageId: 'index',
-	pageTemplate: new Template((params) => [
+	pageTemplate: new Template(async (params) => [
 		$.p('This is the index page.'),
 		$.p('It includes "block1" and "block2" components:'),
-		block1.render(params),
-		block2.render(params)
+		await block1.render(params),
+		await block2.render(params)
 	])
 });

@@ -8,7 +8,7 @@ export interface TemplateParams {
 	pageTemplate: Template<TemplateParams>;
 }
 
-export default new RootTemplate<TemplateParams>((params) => [
+export default new RootTemplate<TemplateParams>(async (params) => [
 	$.head([
 		$.meta({name: 'viewport', content: 'width=device-width, initial-scale=1'}),
 		$.title(params.title),
@@ -58,10 +58,10 @@ export default new RootTemplate<TemplateParams>((params) => [
 		`
 	]),
 	$.body({id: `page-${params.pageId}`}, [
-		header.render(params),
+		await header.render(params),
 		$.main([
-			params.pageTemplate.render(params)
+			await params.pageTemplate.render(params)
 		]),
-		footer.render()
+		await footer.render()
 	])
 ]);
