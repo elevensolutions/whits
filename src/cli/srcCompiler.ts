@@ -37,7 +37,7 @@ export class SrcCompiler {
 		this.tscDistPath = outDir ? resolve(this.cli.input, outDir) : resolve('.whits-dist');
 		this.input = config?.compilerOptions?.rootDir || this.cli.input;
 		this.distPath = this.enabled ? this.tscDistPath : this.cli.input;
-		this.tscArgs = hasConfig ? ['-b'] : ['--outDir', `'${this.tscDistPath}'`, '-m', 'nodenext', '-t', 'es2020', '*.ts'];
+		this.tscArgs = hasConfig ? [] : ['--ignoreConfig', '--outDir', `'${this.tscDistPath}'`, '-m', 'nodenext', '-t', 'es2020', '*.ts'];
 	}
 	
 	/**

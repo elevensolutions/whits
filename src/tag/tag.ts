@@ -155,7 +155,7 @@ export class Tag<S extends SelectorString, T extends SelectorName<S> = SelectorN
 		if (this.isVoid || !deep) return new Tag(this.selector.toString(), attributes);
 		return new Tag(
 			this.selector.toString(), attributes,
-			this.children.map((child) => {
+			(this.children as TagContent<any>).map((child) => {
 				if (child instanceof Tag || child instanceof RawContent) return child.clone(true);
 				return child?.toString();
 			}) as ChildrenArg<T>
@@ -205,7 +205,7 @@ export class Tag<S extends SelectorString, T extends SelectorName<S> = SelectorN
 	 * @returns The HTML string representation of the child elements of the tag.
 	 */
 	public get htmlChildren(): string {
-		return this.children.map((child) => {
+		return (this.children as TagContent<any>).map((child) => {
 			if (child instanceof Tag || (child as CompoundTag<any>).constructor?.name === 'CompoundTag') return (child as Tag<any>).html;
 			if (child instanceof RawContent) return child.toString();
 			return encodeEntities(child as string, !Tag.keepWhitespace.has(this.tag));

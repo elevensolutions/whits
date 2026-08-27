@@ -1,6 +1,6 @@
 {
 	"name": "whits",
-	"version": "1.6.0",
+	"version": "2.0.0",
 	"description": "Write HTML in TypeScript",
 	"keywords": [
 		"typescript",
@@ -31,18 +31,19 @@
 		"examples": "cd examples && npm run build"
 	},
 	"dependencies": {
-		"@types/node": "^25.5.2",
-		"typescript": "^6.0.2"
+		"@types/node": "^26.4.0",
+		"@typescript/native": "npm:typescript@^7.0.2"
 	},
 	"devDependencies": {
-		"@jest/globals": "^30.3.0",
+		"@jest/globals": "^30.4.1",
 		"html-element-attributes": "^3.3.0",
 		"html-tag-names": "^2.1.0",
-		"jest": "^30.3.0",
-		"skott": "^0.35.9",
+		"jest": "^30.4.2",
+		"skott": "^0.35.11",
 		"svg-element-attributes": "^2.1.0",
 		"svg-tag-names": "^3.0.1",
-		"typedoc": "^0.28.18"
+		"typedoc": "^0.28.20",
+		"typescript": "npm:@typescript/typescript6@^6.0.2"
 	},
 	"files": [
 		"dist",
